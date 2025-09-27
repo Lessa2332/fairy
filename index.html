@@ -1,290 +1,130 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="AR-сцена з писанкою для дітей">
-    <title>🥚«Писанка на долоні» 🎨</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Зубна Фея - Інтерактивний Зубчик</title>
 
-    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
-
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: transparent;
-        }
+        body { margin: 0; overflow: hidden; font-family: 'Arial', sans-serif; }
         
-        a-scene {
-            width: 100% !important;
-            height: 100% !important;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: transparent;
-        }
-
-        .arjs-loader {
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: rgba(135, 206, 235, 0.2);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #FF4500;
-            font-size: 1.8em;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse { animation: pulse 1.5s infinite; }
-
-        .controls {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
+        /* Стиль для інструкцій */
+        #instructions {
+            position: absolute; 
+            top: 10px; 
+            left: 50%; 
             transform: translateX(-50%);
-            z-index: 10000;
-            display: flex;
-            gap: 10px;
+            z-index: 10; 
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px; 
+            color: #0057B8; 
+            font-size: 1.1em;
+            padding: 10px 15px;
+            text-align: center;
         }
-
-        .sound-btn, .youtube-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
-            font-size: 1em;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-decoration: none;
-        }
-
-        .sound-btn { background-color: #4CAF50; color: white; }
-        .sound-btn.off { background-color: #f44336; }
-        .youtube-btn { background-color: #FF9800; color: white; }
-        .youtube-btn:hover { background-color: #FFB300; }
     </style>
 </head>
+
 <body>
-    <div class="arjs-loader" id="loader">
-        <div class="pulse">🥚 Писанка на долоні 🎨</div>
-        <div style="margin-top: 20px; font-size: 1.2em;">Наведи камеру на маркер! 😊🎨</div>
+    <div id="instructions">
+        Наведіть камеру на візитівку. Клікніть на 3D-зубчик, щоб він ожив!
     </div>
 
-    <a-scene
-        mindar-image="imageTargetSrc: ./my-marker.mind;"
-        vr-mode-ui="enabled: false"
-        device-orientation-permission-ui="enabled: false"
-        loading-screen="enabled: false"
-        embedded
-        renderer="colorManagement: true; physicallyCorrectLights: true;"
-        touch-gestures
-    >
+    <a-scene mindar-image="imageTargetSrc: my-marker.mind; autoStart: true;"
+             color-space="sRGB"
+             renderer="colorManagement: true, physicallyCorrectLights: true"
+             vr-mode-ui="enabled: false"
+             device-orientation-permission-ui="enabled: false">
+
         <a-assets>
-            <audio id="bg-music" src="./bg-music.mp3" preload="auto" loop></audio>
-            <img id="pisanka-texture" src="./pisanka.jpg">
+            <a-asset-item id="toothModel" src="assets/3d_models/Tooth.glb"></a-asset-item>
+            
+            <audio id="sound1" src="assets/audio/chime1.mp3" preload="auto"></audio>
+            <audio id="sound2" src="assets/audio/jump2.mp3" preload="auto"></audio>
+            <audio id="sound3" src="assets/audio/twinkle3.mp3" preload="auto"></audio>
         </a-assets>
 
-        <a-camera
-            id="camera"
-            position="0 0 1.5"
-            look-controls="enabled: false"
-        ></a-camera>
-
         <a-entity mindar-image-target="targetIndex: 0">
-            <a-sphere
-                id="pisanka"
-                position="0 0 -0.5"
-                radius="0.4"
-                scale="0.6 1 0.6"
-                src="#pisanka-texture"
-                visible="false"
-                material="opacity: 1; transparent: false"
-            >
-                <a-animation
-                    attribute="rotation"
-                    to="0 360 0"
-                    dur="5000"
-                    repeat="indefinite"
-                ></a-animation>
-            </a-sphere>
+            <a-gltf-model id="tooth-model" 
+                          src="#toothModel"
+                          scale="0.2 0.2 0.2"
+                          position="0 0 0.05"
+                          rotation="0 0 0"
+                          shadow>
+                <a-box visible="false" transparent="true" opacity="0.1" 
+                       width="1" height="1" depth="1" position="0 0 0">
+                </a-box> 
+            </a-gltf-model>
         </a-entity>
+
+        <a-camera active="false" position="0 0 0"></a-camera>
     </a-scene>
-
-    <div class="controls">
-        <button id="sound-btn" class="sound-btn">Увімкнути звук</button>
-        <a href="https://www.youtube.com/playlist?list=PL6UDFwT9TzFw5K8Tzu_OgsDz7vV3N9eY-" target="_blank" class="youtube-btn">YouTube SmartLessa</a>
-    </div>
-
+    
     <script>
-        // Адаптивність для повного екрану
-        function fixHeight() { 
-            document.body.style.height = window.innerHeight + 'px'; 
-        }
-        fixHeight();
-        window.addEventListener('resize', fixHeight);
+        const toothModel = document.getElementById('tooth-model');
+        const soundFiles = ['sound1', 'sound2', 'sound3'];
+        let currentSoundIndex = 0;
 
-        // Посилання на елементи
-        const loader = document.querySelector('#loader');
-        const targetEntity = document.querySelector('[mindar-image-target]');
-        const pisanka = document.querySelector('#pisanka');
-        const bgMusic = document.querySelector('#bg-music');
-        const soundBtn = document.querySelector('#sound-btn');
+        // Функція, що активує інтеракцію
+        function interactWithTooth() {
+            // 1. ЗВУК: Відтворення одного з трьох звуків по черзі
+            const currentSoundId = soundFiles[currentSoundIndex];
+            const audioEl = document.getElementById(currentSoundId);
+            
+            // Скидаємо звук і відтворюємо, щоб він не чекав закінчення
+            audioEl.currentTime = 0; 
+            audioEl.play().catch(error => console.error("Помилка відтворення звуку:", error));
 
-        // Перевірка завантаження текстури
-        const pisankaTexture = document.querySelector('#pisanka-texture');
-        if (pisankaTexture) {
-            pisankaTexture.addEventListener('load', () => {
-                console.log('Текстура pisanka.jpg успішно завантажена');
-            });
-            pisankaTexture.addEventListener('error', () => {
-                console.error('Помилка завантаження текстури pisanka.jpg');
-                if (pisanka) {
-                    pisanka.setAttribute('color', '#FF0000'); // Червоний колір як резервний
-                }
-            });
-        }
+            // Перехід до наступного звуку по колу
+            currentSoundIndex = (currentSoundIndex + 1) % soundFiles.length;
 
-        // Логіка відстеження маркера
-        if (targetEntity) {
-            targetEntity.addEventListener('targetFound', () => {
-                console.log("🎯 Маркер знайдено! Писанка з'явилася.");
-                loader.style.display = 'none';
-                if (pisanka) {
-                    pisanka.setAttribute('visible', 'true');
-                    console.log("Писанка видима:", pisanka.getAttribute('visible'));
-                    pisanka.components.animation.pause();
-                }
-                if (bgMusic && bgMusic.paused) {
-                    bgMusic.play().catch(e => console.log("🔇 Помилка відтворення музики:", e));
-                    soundBtn.classList.remove('off');
-                    soundBtn.textContent = 'Вимкнути звук';
-                }
+            // 2. АНІМАЦІЯ: Стрибок (рух по осі Y)
+            toothModel.setAttribute('animation__jump', {
+                property: 'position',
+                to: '0 0.5 0.05', // Піднімаємо на 0.5 одиниці
+                dur: 300,
+                easing: 'easeOutQuad',
+                dir: 'alternate',
+                loop: false
             });
 
-            targetEntity.addEventListener('targetLost', () => {
-                console.log("ℹ️ Маркер втрачено.");
-                if (pisanka) {
-                    pisanka.setAttribute('visible', 'false');
-                    console.log("Писанка невидима:", pisanka.getAttribute('visible'));
-                    pisanka.components.animation.play();
-                }
-                if (bgMusic && !bgMusic.paused) bgMusic.pause();
-                loader.style.display = 'flex';
-                loader.querySelector('.pulse').textContent = '🥚 Писанка на долоні 🎨';
-                loader.querySelector('div[style]').textContent = 'Наведи камеру на маркер! 😊🎨';
+            // 3. АНІМАЦІЯ: Обертання на 360 градусів
+            toothModel.setAttribute('animation__rotate', {
+                property: 'rotation',
+                to: '0 360 0',
+                dur: 1000,
+                easing: 'linear',
+                loop: false
             });
-        } else {
-            console.error('Елемент mindar-image-target не знайдено!');
+
+            // 4. АНІМАЦІЯ: "Щось іще" (Пульсація розміру та зміна кольору)
+            toothModel.setAttribute('animation__pulse', {
+                property: 'scale',
+                to: '0.25 0.25 0.25',
+                dur: 200,
+                dir: 'alternate',
+                loop: 2
+            });
+            
+            // Зміна кольору (тимчасове підсвічування)
+             toothModel.setAttribute('material', 'color', '#FFD700'); // Золотистий колір
+             setTimeout(() => {
+                 toothModel.setAttribute('material', 'color', '#ffffff'); // Повертаємо базовий колір
+             }, 1200);
         }
 
-        // Обробка кнопки звуку
-        soundBtn.addEventListener('click', () => {
-            if (bgMusic.paused) {
-                bgMusic.play().catch(e => console.log("🔇 Помилка відтворення музики:", e));
-                soundBtn.classList.remove('off');
-                soundBtn.textContent = 'Вимкнути звук';
-            } else {
-                bgMusic.pause();
-                soundBtn.classList.add('off');
-                soundBtn.textContent = 'Увімкнути звук';
-            }
+        // Обробник кліку на модель
+        toothModel.addEventListener('click', interactWithTooth);
+        
+        // Опціонально: автоматична активація при знаходженні (щоб привітати дитину)
+        const sceneEl = document.querySelector('a-scene');
+        sceneEl.addEventListener('targetFound', function() {
+            setTimeout(interactWithTooth, 500); // Невеликий танець при появі
         });
 
-        // Компонент для обробки сенсорних жестів
-        AFRAME.registerComponent('touch-gestures', {
-            schema: {
-                minScale: { type: 'number', default: 0.2 },
-                maxScale: { type: 'number', default: 3.0 },
-                rotationSpeed: { type: 'number', default: 2.0 }
-            },
-            init: function () {
-                this.isRotating = false;
-                this.isPinching = false;
-                this.startPos = { x: 0, y: 0 };
-                this.currentScale = 1;
-                this.pisanka = document.querySelector('#pisanka');
-
-                if (!this.pisanka) {
-                    console.error('Писанка не знайдена в компоненті touch-gestures');
-                    return;
-                }
-
-                console.log('Компонент touch-gestures ініціалізовано');
-
-                this.el.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    console.log('touchstart triggered, touches:', e.touches.length);
-                    if (e.touches.length === 1) {
-                        this.isRotating = true;
-                        this.startPos.x = e.touches[0].pageX;
-                        this.startPos.y = e.touches[0].pageY;
-                        console.log('Початок обертання, позиція:', this.startPos);
-                    } else if (e.touches.length === 2) {
-                        this.isPinching = true;
-                        this.isRotating = false;
-                        this.initialDistance = Math.hypot(
-                            e.touches[0].pageX - e.touches[1].pageX,
-                            e.touches[0].pageY - e.touches[1].pageY
-                        );
-                        this.currentScale = this.pisanka.object3D.scale.x;
-                        console.log('Початок масштабування, відстань:', this.initialDistance, 'початковий масштаб:', this.currentScale);
-                    }
-                });
-
-                this.el.addEventListener('touchmove', (e) => {
-                    e.preventDefault();
-                    console.log('touchmove triggered, touches:', e.touches.length);
-                    if (this.isPinching && e.touches.length === 2) {
-                        const currentDistance = Math.hypot(
-                            e.touches[0].pageX - e.touches[1].pageX,
-                            e.touches[0].pageY - e.touches[1].pageY
-                        );
-                        const scaleFactor = currentDistance / this.initialDistance;
-                        const newScale = Math.max(this.data.minScale, Math.min(this.data.maxScale, this.currentScale * scaleFactor));
-                        // Зберігаємо пропорцію яйця (0.6:1:0.6)
-                        const eggScaleX = newScale * 0.6;
-                        const eggScaleY = newScale * 1;
-                        const eggScaleZ = newScale * 0.6;
-                        this.pisanka.object3D.scale.set(eggScaleX, eggScaleY, eggScaleZ);
-                        console.log('Масштабування, новий масштаб:', { x: eggScaleX, y: eggScaleY, z: eggScaleZ });
-                    } else if (this.isRotating && e.touches.length === 1) {
-                        const deltaX = (e.touches[0].pageX - this.startPos.x) * this.data.rotationSpeed;
-                        const deltaY = (e.touches[0].pageY - this.startPos.y) * this.data.rotationSpeed;
-                        this.pisanka.object3D.rotation.y += THREE.MathUtils.degToRad(deltaX);
-                        this.pisanka.object3D.rotation.x += THREE.MathUtils.degToRad(deltaY);
-                        this.startPos.x = e.touches[0].pageX;
-                        this.startPos.y = e.touches[0].pageY;
-                        console.log('Обертання, deltaX:', deltaX, 'deltaY:', deltaY);
-                    }
-                });
-
-                this.el.addEventListener('touchend', () => {
-                    console.log('touchend triggered');
-                    this.isRotating = false;
-                    this.isPinching = false;
-                });
-            }
-        });
     </script>
 </body>
 </html>
