@@ -40,18 +40,18 @@
              device-orientation-permission-ui="enabled: false">
 
         <a-assets>
-            <a-asset-item id="toothModel" src="assets/3d_models/Tooth.glb"></a-asset-item>
+            <a-asset-item id="toothModel" src="assets/3d_models/a-gltf-model.glb"></a-asset-item>
             
-            <audio id="sound1" src="assets/audio/chime1.mp3" preload="auto"></audio>
-            <audio id="sound2" src="assets/audio/jump2.mp3" preload="auto"></audio>
-            <audio id="sound3" src="assets/audio/twinkle3.mp3" preload="auto"></audio>
+            <audio id="sound1" src="assets/audio/sound1.mp3" preload="auto"></audio>
+            <audio id="sound2" src="assets/audio/sound2.mp3" preload="auto"></audio>
+            <audio id="sound3" src="assets/audio/sound3.mp3" preload="auto"></audio>
         </a-assets>
 
         <a-entity mindar-image-target="targetIndex: 0">
             <a-gltf-model id="tooth-model" 
                           src="#toothModel"
                           scale="0.2 0.2 0.2"
-                          position="0 0 0.05"
+                          position="0 0 0.1"
                           rotation="0 0 0"
                           shadow>
                 <a-box visible="false" transparent="true" opacity="0.1" 
@@ -60,7 +60,17 @@
             </a-gltf-model>
         </a-entity>
 
-        <a-camera active="false" position="0 0 0"></a-camera>
+        <a-light type="directional" intensity="0.6" position="-1 1 1"></a-light>
+        <a-light type="ambient" intensity="0.4"></a-light>
+
+        <a-camera position="0 0 0" look-controls>
+            <a-cursor 
+                fuse="true" 
+                fuseTimeout="500"
+                rayOrigin="mouse"
+                color="#FFD700">
+            </a-cursor>
+        </a-camera>
     </a-scene>
     
     <script>
@@ -68,30 +78,30 @@
         const soundFiles = ['sound1', 'sound2', 'sound3'];
         let currentSoundIndex = 0;
 
-        // Функція, що активує інтеракцію
         function interactWithTooth() {
-            // 1. ЗВУК: Відтворення одного з трьох звуків по черзі
+            // Очищаємо попередні анімації
+            toothModel.removeAttribute('animation__jump');
+            toothModel.removeAttribute('animation__rotate');
+            toothModel.removeAttribute('animation__pulse');
+
+            // Відтворення звуку
             const currentSoundId = soundFiles[currentSoundIndex];
             const audioEl = document.getElementById(currentSoundId);
-            
-            // Скидаємо звук і відтворюємо, щоб він не чекав закінчення
-            audioEl.currentTime = 0; 
+            audioEl.currentTime = 0;
             audioEl.play().catch(error => console.error("Помилка відтворення звуку:", error));
-
-            // Перехід до наступного звуку по колу
             currentSoundIndex = (currentSoundIndex + 1) % soundFiles.length;
 
-            // 2. АНІМАЦІЯ: Стрибок (рух по осі Y)
+            // Анімація: стрибок
             toothModel.setAttribute('animation__jump', {
                 property: 'position',
-                to: '0 0.5 0.05', // Піднімаємо на 0.5 одиниці
+                to: '0 0.5 0.1',
                 dur: 300,
                 easing: 'easeOutQuad',
                 dir: 'alternate',
                 loop: false
             });
 
-            // 3. АНІМАЦІЯ: Обертання на 360 градусів
+            // Анімація: обертання
             toothModel.setAttribute('animation__rotate', {
                 property: 'rotation',
                 to: '0 360 0',
@@ -100,7 +110,7 @@
                 loop: false
             });
 
-            // 4. АНІМАЦІЯ: "Щось іще" (Пульсація розміру та зміна кольору)
+            // Анімація: пульсація
             toothModel.setAttribute('animation__pulse', {
                 property: 'scale',
                 to: '0.25 0.25 0.25',
@@ -108,23 +118,24 @@
                 dir: 'alternate',
                 loop: 2
             });
-            
-            // Зміна кольору (тимчасове підсвічування)
-             toothModel.setAttribute('material', 'color', '#FFD700'); // Золотистий колір
-             setTimeout(() => {
-                 toothModel.setAttribute('material', 'color', '#ffffff'); // Повертаємо базовий колір
-             }, 1200);
+
+            // Тимчасове підсвічування
+            toothModel.setAttribute('material', 'color', '#FFD700');
+            setTimeout(() => {
+                toothModel.setAttribute('material', 'color', '#ffffff');
+            }, 1200);
         }
 
-        // Обробник кліку на модель
+        // Обробник кліку
         toothModel.addEventListener('click', interactWithTooth);
-        
-        // Опціонально: автоматична активація при знаходженні (щоб привітати дитину)
+
+        // Автоматична активація при виявленні маркера
         const sceneEl = document.querySelector('a-scene');
         sceneEl.addEventListener('targetFound', function() {
-            setTimeout(interactWithTooth, 500); // Невеликий танець при появі
+            if (toothModel.object3D) {
+                setTimeout(interactWithTooth, 500);
+            }
         });
-
     </script>
 </body>
 </html>
