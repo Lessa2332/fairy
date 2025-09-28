@@ -1,141 +1,501 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Зубна Фея - Інтерактивний Зубчик</title>
+    <title>🦷 AR Зубна Фея — Інтерактивний Зубчик</title>
 
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    
+    <!-- A-Frame + MindAR -->
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+
+    <!-- Comic Neue -->
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Arial', sans-serif; }
-        
-        /* Стиль для інструкцій */
-        #instructions {
-            position: absolute; 
-            top: 10px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            z-index: 10; 
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            text-transform: none;
+        }
+        a-scene {
+            width: 100% !important;
+            height: 100% !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: transparent;
+        }
+        .arjs-loader {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px; 
-            color: #0057B8; 
-            font-size: 1.1em;
-            padding: 10px 15px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #0057B8;
+            font-size: 1.5em;
             text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            text-transform: none;
+        }
+        .ui-btn {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 30px;
+            border-radius: 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+            z-index: 1000;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            display: none;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            text-transform: none;
+        }
+        #playBtn {
+            bottom: 180px;
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+        }
+        #stopBtn {
+            bottom: 180px;
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+        }
+        #resetBtn {
+            bottom: 100px;
+            background: linear-gradient(45deg, #54a0ff, #5f27cd);
+            color: white;
+        }
+        #soundBtn {
+            bottom: 260px;
+            background: linear-gradient(45deg, #00CED1, #20B2AA);
+            color: white;
+        }
+        #youtubeBtn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            transform: none;
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #ff4757, #ff6348);
+            color: white;
+            border-radius: 25px;
+            font-size: 0.95em;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            z-index: 1100;
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: none;
+        }
+        #youtubeBtn:hover {
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4);
+        }
+        .ui-info-text {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            transform: none;
+            z-index: 500;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            text-align: left;
+            font-weight: bold;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+            text-transform: none;
+        }
+        #timerText {
+            color: #00008B;
+            font-size: 1.4em;
+            display: none;
+        }
+        #scoreText {
+            top: 50px;
+            color: #00FF7F;
+            font-size: 1.4em;
+            display: none;
+        }
+        #canvasGameContainer {
+            z-index: 1000;
+            position: relative;
+        }
+        #endMessage {
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            text-transform: none;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
-
 <body>
-    <div id="instructions">
-        Наведіть камеру на візитівку. Клікніть на 3D-зубчик, щоб він ожив!
+    <div class="arjs-loader" id="loader">
+        <div class="pulse">🦷 Ласкаво просимо до гри "Зубна Фея"!</div>
+        <div style="margin-top: 20px; font-size: 1.1em;">
+            Наведіть камеру на візитівку, щоб почати!
+        </div>
     </div>
 
-    <a-scene mindar-image="imageTargetSrc: my-marker.mind; autoStart: true;"
-             color-space="sRGB"
-             renderer="colorManagement: true, physicallyCorrectLights: true"
-             vr-mode-ui="enabled: false"
-             device-orientation-permission-ui="enabled: false">
+    <p id="timerText" class="ui-info-text">⏳ Час: 01:00</p>
+    <p id="scoreText" class="ui-info-text">🌟 Балів: 0</p>
 
+    <div id="canvasGameContainer" style="display: none;">
+        <canvas id="gameCanvas"></canvas>
+        <button id="endBtn" class="ui-btn">🛑 Завершити</button>
+    </div>
+
+    <div id="endMessage" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(74,21,75,0.9); color:white; padding:20px; border-radius:15px; z-index:10000; font-size:1.2em; text-align:center; font-family:'Comic Neue', 'Comic Sans MS', cursive; box-shadow:0 8px 20px rgba(0,0,0,0.4);">
+    </div>
+
+    <a-scene
+        mindar-image="imageTargetSrc: my-marker.mind;"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+        loading-screen="enabled: false"
+        embedded
+        renderer="colorManagement: true; physicallyCorrectLights: true;"
+    >
         <a-assets>
             <a-asset-item id="toothModel" src="assets/3d_models/a-gltf-model.glb"></a-asset-item>
-            
-            <audio id="sound1" src="assets/audio/sound1.mp3" preload="auto"></audio>
-            <audio id="sound2" src="assets/audio/sound2.mp3" preload="auto"></audio>
-            <audio id="sound3" src="assets/audio/sound3.mp3" preload="auto"></audio>
+            <audio id="bg-music" src="assets/audio/sound1.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
         </a-assets>
 
+        <a-camera
+            look-controls="enabled: false"
+            position="0 0 0"
+        >
+            <a-cursor
+                raycaster="objects: .emoji;"
+                cursor="fuse: false; maxDistance: 10"
+                position="0 0 -1"
+                geometry="primitive: ring; radiusOuter: 0.015; radiusInner: 0.008"
+                material="color: #FFD700; shader: flat"
+            ></a-cursor>
+        </a-camera>
+
         <a-entity mindar-image-target="targetIndex: 0">
-            <a-gltf-model id="tooth-model" 
-                          src="#toothModel"
-                          scale="0.2 0.2 0.2"
-                          position="0 0 0.1"
-                          rotation="0 0 0"
-                          shadow>
+            <a-gltf-model
+                id="tooth-model"
+                src="#toothModel"
+                scale="0.6 0.6 0.6"  <!-- У 3 рази більше -->
+                position="0 0 0.1"   <!-- Центрально над маркером -->
+                rotation="0 0 0"
+                shadow>
                 <a-box visible="false" transparent="true" opacity="0.1" 
                        width="1" height="1" depth="1" position="0 0 0">
                 </a-box> 
             </a-gltf-model>
         </a-entity>
-
-        <a-light type="directional" intensity="0.6" position="-1 1 1"></a-light>
-        <a-light type="ambient" intensity="0.4"></a-light>
-
-        <a-camera position="0 0 0" look-controls>
-            <a-cursor 
-                fuse="true" 
-                fuseTimeout="500"
-                rayOrigin="mouse"
-                color="#FFD700">
-            </a-cursor>
-        </a-camera>
     </a-scene>
-    
+
+    <button id="playBtn" class="ui-btn">🚀 Почати гру!</button>
+    <button id="stopBtn" class="ui-btn" style="display: none;">🛑 Зупинити</button>
+    <button id="resetBtn" class="ui-btn">🔄 Спробувати ще!</button>
+    <button id="soundBtn" class="ui-btn" style="display: none;">🔊 Увімкнути звук</button>
+    <a href="https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi" id="youtubeBtn" target="_blank">❤️ Автор SmartLessa</a>
+
     <script>
-        const toothModel = document.getElementById('tooth-model');
-        const soundFiles = ['sound1', 'sound2', 'sound3'];
-        let currentSoundIndex = 0;
+        function fixHeight() {
+            document.body.style.height = window.innerHeight + 'px';
+        }
+        fixHeight();
+        window.addEventListener('resize', fixHeight);
 
-        function interactWithTooth() {
-            // Очищаємо попередні анімації
-            toothModel.removeAttribute('animation__jump');
-            toothModel.removeAttribute('animation__rotate');
-            toothModel.removeAttribute('animation__pulse');
+        const loader = document.querySelector('#loader');
+        const targetEntity = document.querySelector('a-entity[mindar-image-target]');
+        const toothModel = document.querySelector('#tooth-model');
+        const playBtn = document.querySelector('#playBtn');
+        const stopBtn = document.querySelector('#stopBtn');
+        const resetBtn = document.querySelector('#resetBtn');
+        const soundBtn = document.querySelector('#soundBtn');
+        const youtubeBtn = document.querySelector('#youtubeBtn');
+        const timerText = document.getElementById('timerText');
+        const scoreText = document.getElementById('scoreText');
+        const bgMusic = document.querySelector('#bg-music');
+        const endMessage = document.getElementById('endMessage');
 
-            // Відтворення звуку
-            const currentSoundId = soundFiles[currentSoundIndex];
-            const audioEl = document.getElementById(currentSoundId);
-            audioEl.currentTime = 0;
-            audioEl.play().catch(error => console.error("Помилка відтворення звуку:", error));
-            currentSoundIndex = (currentSoundIndex + 1) % soundFiles.length;
+        let isGameRunning = false;
+        let arStarted = false;
+        let score = 0;
+        let emojis = [];
+        let startTime = null;
+        let inputHandler = null;
 
-            // Анімація: стрибок
-            toothModel.setAttribute('animation__jump', {
-                property: 'position',
-                to: '0 0.5 0.1',
-                dur: 300,
-                easing: 'easeOutQuad',
-                dir: 'alternate',
-                loop: false
-            });
-
-            // Анімація: обертання
-            toothModel.setAttribute('animation__rotate', {
-                property: 'rotation',
-                to: '0 360 0',
-                dur: 1000,
-                easing: 'linear',
-                loop: false
-            });
-
-            // Анімація: пульсація
-            toothModel.setAttribute('animation__pulse', {
-                property: 'scale',
-                to: '0.25 0.25 0.25',
-                dur: 200,
-                dir: 'alternate',
-                loop: 2
-            });
-
-            // Тимчасове підсвічування
-            toothModel.setAttribute('material', 'color', '#FFD700');
-            setTimeout(() => {
-                toothModel.setAttribute('material', 'color', '#ffffff');
-            }, 1200);
+        // Керування звуком
+        function toggleSound() {
+            if (bgMusic.muted) {
+                bgMusic.muted = false;
+                bgMusic.play().catch(e => console.log("🔇 Звук не запустився:", e));
+                soundBtn.textContent = "🔇 Вимкнути звук";
+            } else {
+                bgMusic.pause();
+                bgMusic.muted = true;
+                soundBtn.textContent = "🔊 Увімкнути звук";
+            }
         }
 
-        // Обробник кліку
-        toothModel.addEventListener('click', interactWithTooth);
+        soundBtn.addEventListener('click', toggleSound);
 
-        // Автоматична активація при виявленні маркера
-        const sceneEl = document.querySelector('a-scene');
-        sceneEl.addEventListener('targetFound', function() {
-            if (toothModel.object3D) {
-                setTimeout(interactWithTooth, 500);
+        targetEntity.addEventListener('targetFound', () => {
+            console.log("🎯 Маркер знайдено!");
+            arStarted = true;
+            loader.style.display = 'none';
+            if (!isGameRunning) {
+                playBtn.style.display = 'block';
+                soundBtn.style.display = 'block';
+                youtubeBtn.style.display = 'block';
             }
         });
+
+        targetEntity.addEventListener('targetLost', () => {
+            if (isGameRunning) return;
+            playBtn.style.display = 'none';
+            soundBtn.style.display = 'none';
+            youtubeBtn.style.display = 'none';
+            resetBtn.style.display = 'none';
+            timerText.style.display = 'none';
+            scoreText.style.display = 'none';
+        });
+
+        playBtn.addEventListener('click', startCanvasGame);
+        stopBtn.addEventListener('click', stopGame);
+        resetBtn.addEventListener('click', resetGame);
+
+        youtubeBtn.addEventListener('click', () => {
+            console.log("🔗 Клік по YouTube-кнопці!");
+            window.open('https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi', '_blank');
+        });
+        youtubeBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            console.log("🔗 Сенсорний клік по YouTube-кнопці!");
+            window.open('https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi', '_blank');
+        });
+
+        function startCanvasGame() {
+            console.log("▶️ Початок Canvas-гри!");
+            isGameRunning = true;
+            playBtn.style.display = 'none';
+            soundBtn.style.display = 'none';
+            youtubeBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            resetBtn.style.display = 'none';
+            document.querySelector('a-scene').style.display = 'none';
+            document.getElementById('canvasGameContainer').style.display = 'block';
+            initCanvasGame();
+        }
+
+        function stopGame() {
+            if (!isGameRunning) return;
+            isGameRunning = false;
+            stopBtn.style.display = 'none';
+            resetBtn.style.display = 'none';
+            playBtn.style.display = 'block';
+            soundBtn.style.display = 'block';
+            youtubeBtn.style.display = 'block';
+            document.getElementById('canvasGameContainer').style.display = 'none';
+            document.querySelector('a-scene').style.display = 'block';
+            timerText.style.display = 'none';
+            scoreText.style.display = 'none';
+            if (endMessage) endMessage.style.display = 'none';
+            bgMusic.pause();
+            bgMusic.muted = true;
+            soundBtn.textContent = "🔊 Увімкнути звук";
+        }
+
+        function resetGame() {
+            stopGame();
+            score = 0;
+            emojis = [];
+            startTime = null;
+            scoreText.textContent = `🌟 Балів: 0`;
+            timerText.textContent = `⏳ Час: 60`;
+            playBtn.style.display = 'block';
+            soundBtn.style.display = 'block';
+            youtubeBtn.style.display = 'block';
+            resetBtn.style.display = 'none';
+            bgMusic.pause();
+            bgMusic.muted = true;
+            soundBtn.textContent = "🔊 Увімкнути звук";
+        }
+
+        function initCanvasGame() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            if (bgMusic && !bgMusic.muted) {
+                bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
+            }
+
+            // Корисні та шкідливі емоджі
+            const goodEmojis = ['🦷', '🧚🏻', '🚰', '🪥', '🍎', '🍏'];
+            const badEmojis = ['🍔', '🍟', '🍕', '🍦', '🍭', '🍫', '🧁'];
+
+            function createEmoji() {
+                const isGood = Math.random() > 0.5; // 50% шанс корисного
+                return {
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: 40 + Math.random() * 60,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    value: isGood ? goodEmojis[Math.floor(Math.random() * goodEmojis.length)] : badEmojis[Math.floor(Math.random() * badEmojis.length)],
+                    isGood: isGood,
+                    isClicked: false,
+                    fadeOut: 0
+                };
+            }
+
+            if (emojis.length === 0) {
+                for (let i = 0; i < 5; i++) {
+                    emojis.push(createEmoji());
+                }
+            }
+
+            startTime = Date.now();
+            timerText.style.display = 'block';
+            timerText.textContent = `⏳ Час: 60`;
+            scoreText.style.display = 'block';
+            scoreText.textContent = `🌟 Балів: ${score}`;
+
+            if (inputHandler) {
+                canvas.removeEventListener('click', inputHandler);
+                canvas.removeEventListener('touchstart', inputHandler);
+            }
+
+            inputHandler = (e) => {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+
+                emojis.forEach((emoji, index) => {
+                    if (emoji.isClicked || emoji.fadeOut > 0) return;
+                    const dx = x - emoji.x;
+                    const dy = y - emoji.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < emoji.size / 2) {
+                        emoji.isClicked = true;
+                        emoji.fadeOut = 1;
+
+                        if (emoji.isGood) {
+                            score += 10; // +10 за корисне
+                            emoji.value = '✨'; // або можна залишити оригінал
+                        } else {
+                            score -= 5; // -5 за шкідливе
+                            emoji.value = '💥'; // візуальна підказка
+                        }
+
+                        scoreText.textContent = `🌟 Балів: ${score}`;
+                        if (emoji.isGood) {
+                            // Не додаємо новий — поки що просто очолюємо
+                        } else {
+                            // Якщо натиснули шкідливе — не додаємо
+                        }
+
+                        // Звук при натисканні (можна додати окремий)
+                        if (bgMusic && !bgMusic.muted) {
+                            bgMusic.currentTime = 0;
+                            bgMusic.play().catch(e => console.log("🔇 Звук не запустився:", e));
+                        }
+                    }
+                });
+            };
+
+            canvas.addEventListener('click', inputHandler);
+            canvas.addEventListener('touchstart', inputHandler, { passive: false });
+
+            let lastTime = Date.now();
+            function animate() {
+                if (!isGameRunning) return;
+
+                const now = Date.now();
+                lastTime = now;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                emojis = emojis.filter(emoji => emoji.fadeOut > 0 || !emoji.isClicked);
+                emojis.forEach(emoji => {
+                    if (emoji.isClicked && emoji.fadeOut > 0) {
+                        emoji.fadeOut -= 0.1;
+                        ctx.globalAlpha = emoji.fadeOut;
+                    } else if (!emoji.isClicked) {
+                        emoji.x += emoji.vx;
+                        emoji.y += emoji.vy;
+                        if (emoji.x < 0 || emoji.x > canvas.width) emoji.vx *= -1;
+                        if (emoji.y < 0 || emoji.y > canvas.height) emoji.vy *= -1;
+                    }
+
+                    ctx.font = `${emoji.size}px 'Comic Neue', 'Comic Sans MS', cursive, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = emoji.isGood ? '#00FF7F' : '#FF4757';
+                    ctx.fillText(emoji.value, emoji.x, emoji.y);
+                    ctx.globalAlpha = 1;
+                });
+
+                // Додаємо нові емоджі, якщо менше 10
+                if (emojis.length < 10) {
+                    emojis.push(createEmoji());
+                }
+
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const remaining = 60 - elapsed;
+                if (remaining <= 0) {
+                    endCanvasGame();
+                    return;
+                }
+                timerText.textContent = `⏳ Час: ${String(remaining).padStart(2, '0')}`;
+
+                requestAnimationFrame(animate);
+            }
+
+            function endCanvasGame() {
+                isGameRunning = false;
+                stopBtn.style.display = 'none';
+                resetBtn.style.display = 'block';
+                timerText.style.display = 'none';
+                scoreText.style.display = 'none';
+                endMessage.textContent = `Гра завершена! Твій результат: ${score} балів! 🦷✨`;
+                endMessage.style.display = 'block';
+                bgMusic.pause();
+                bgMusic.muted = true;
+                soundBtn.textContent = "🔊 Увімкнути звук";
+
+                setTimeout(() => {
+                    endMessage.style.display = 'none';
+                    stopGame();
+                }, 5000);
+            }
+
+            document.getElementById('endBtn').addEventListener('click', endCanvasGame);
+            requestAnimationFrame(animate);
+        }
     </script>
 </body>
 </html>
