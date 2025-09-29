@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🦷 AR Nikadent-Family - ДИТЯЧА ВЕРСІЯ</title>
+    <title>🦷 AR Nikadent - Дитяча гра</title>
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
@@ -41,17 +41,17 @@
             justify-content: center;
             align-items: center;
             color: #0057B8;
-            font-size: clamp(1.2em, 5vw, 1.5em);
+            font-size: clamp(1.4em, 6vw, 1.8em);
             text-align: center;
-            padding: 20px;
+            padding: clamp(10px, 3vw, 15px);
             box-sizing: border-box;
             font-family: 'Comic Neue', sans-serif;
         }
         .ui-btn {
             position: fixed;
-            padding: clamp(12px, 3vw, 15px) clamp(20px, 5vw, 25px);
+            padding: clamp(15px, 4vw, 20px) clamp(25px, 6vw, 30px);
             border-radius: 30px;
-            font-size: clamp(1em, 4vw, 1.2em);
+            font-size: clamp(1.2em, 5vw, 1.5em);
             font-weight: bold;
             z-index: 1000;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
@@ -61,30 +61,30 @@
             display: none;
             font-family: 'Comic Neue', sans-serif;
             text-align: center;
-            width: clamp(40%, 45vw, 45%);
-            max-width: 250px;
+            width: clamp(45%, 50vw, 50%);
+            max-width: 280px;
             animation: pulse 2s infinite;
         }
-        #startGame1Btn { bottom: clamp(140px, 20vh, 150px); left: clamp(4%, 2vw, 5%); background: linear-gradient(45deg, #FF6B6B, #FF8E53); color: white; }
-        #startGame2Btn { bottom: clamp(140px, 20vh, 150px); right: clamp(4%, 2vw, 5%); background: linear-gradient(45deg, #87CEFA, #4682B4); color: white; }
-        #rulesBtn { bottom: clamp(60px, 10vh, 70px); left: clamp(4%, 2vw, 5%); background: linear-gradient(45deg, #FFD700, #FFA500); color: #4A00E0; border: 3px solid #4A00E0; }
-        #soundBtn { bottom: clamp(60px, 10vh, 70px); right: clamp(4%, 2vw, 5%); background: linear-gradient(45deg, #00CED1, #20B2AA); color: white; }
+        #startGame1Btn { bottom: clamp(160px, 22vh, 180px); left: clamp(3%, 2vw, 5%); background: linear-gradient(45deg, #FF6B6B, #FF8E53); color: white; }
+        #startGame2Btn { bottom: clamp(160px, 22vh, 180px); right: clamp(3%, 2vw, 5%); background: linear-gradient(45deg, #87CEFA, #4682B4); color: white; }
+        #rulesBtn { bottom: clamp(70px, 12vh, 80px); left: clamp(3%, 2vw, 5%); background: linear-gradient(45deg, #FFD700, #FFA500); color: #4A00E0; border: 3px solid #4A00E0; }
+        #soundBtn { bottom: clamp(70px, 12vh, 80px); right: clamp(3%, 2vw, 5%); background: linear-gradient(45deg, #00CED1, #20B2AA); color: white; }
         #endBtn, #cleaningEndBtn, #stopBtn {
-            bottom: clamp(15px, 3vh, 20px);
-            right: clamp(15px, 3vw, 20px);
-            padding: clamp(10px, 2.5vw, 12px) clamp(15px, 4vw, 20px);
-            font-size: clamp(0.9em, 3.5vw, 1em);
+            bottom: clamp(10px, 2vh, 15px);
+            right: clamp(10px, 2vw, 15px);
+            padding: clamp(12px, 3vw, 15px) clamp(20px, 5vw, 25px);
+            font-size: clamp(1em, 4vw, 1.2em);
             background: linear-gradient(45deg, #ff4757, #ff6b81);
             color: white;
             width: auto;
-            max-width: 150px;
+            max-width: 180px;
         }
         .corner-btn {
             position: fixed;
-            bottom: clamp(15px, 3vh, 20px);
-            padding: clamp(10px, 2.5vw, 12px) clamp(15px, 4vw, 20px);
+            bottom: clamp(10px, 2vh, 15px);
+            padding: clamp(12px, 3vw, 15px) clamp(20px, 5vw, 25px);
             border-radius: 25px;
-            font-size: clamp(0.9em, 3.5vw, 0.95em);
+            font-size: clamp(1em, 4vw, 1.2em);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             display: none;
             font-family: 'Comic Neue';
@@ -92,47 +92,44 @@
             text-decoration: none;
             animation: pulse 2s infinite;
         }
-        #youtubeBtn { left: clamp(15px, 3vw, 20px); background: linear-gradient(45deg, #ff4757, #ff6348); color: white; }
-        #aboutBtn { right: clamp(15px, 3vw, 20px); background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; }
+        #youtubeBtn { left: clamp(10px, 2vw, 15px); background: linear-gradient(45deg, #ff4757, #ff6348); color: white; }
+        #aboutBtn { right: clamp(10px, 2vw, 15px); background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; }
         .ui-info-text {
             position: fixed;
-            left: clamp(8px, 2vw, 10px);
-            top: clamp(8px, 2vh, 10px);
+            left: clamp(5px, 1.5vw, 8px);
+            top: clamp(5px, 1.5vh, 8px);
             z-index: 500;
             font-family: 'Comic Neue';
             text-align: left;
             font-weight: bold;
             text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.7);
             color: #4A00E0;
-            font-size: clamp(1.3em, 4.5vw, 1.5em);
+            font-size: clamp(1.4em, 5vw, 1.8em);
         }
-        #scoreText { top: clamp(50px, 10vh, 60px); }
+        #scoreText { top: clamp(40px, 8vh, 50px); }
         #endMessage, #rulesMessage {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(74,21,75,0.95);
+            background: linear-gradient(135deg, #4A00E0, #8E2DE2);
             color: white;
-            padding: clamp(20px, 5vw, 30px);
+            padding: clamp(15px, 4vw, 20px);
             border-radius: 20px;
             z-index: 10000;
-            font-size: clamp(1.2em, 4.5vw, 1.5em);
+            font-size: clamp(1.2em, 5vw, 1.6em);
             text-align: center;
             font-family: 'Comic Neue';
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
             display: none;
-            max-width: 90%;
-        }
-        #rulesMessage {
-            background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+            max-width: 95%;
             border: 3px solid #FFD700;
         }
-        #rulesMessage h3 { font-size: clamp(1.3em, 5vw, 1.5em); }
-        #rulesMessage ul { text-align: left; list-style-type: '👉 '; padding-left: 20px; }
-        #rulesMessage li { margin-bottom: 10px; }
+        #rulesMessage h3 { font-size: clamp(1.4em, 6vw, 1.8em); margin: clamp(5px, 1vh, 10px) 0; }
+        #rulesMessage ul { text-align: left; list-style-type: '👉 '; padding-left: clamp(15px, 4vw, 20px); margin: clamp(5px, 1vh, 10px) 0; }
+        #rulesMessage li { margin-bottom: clamp(5px, 1.5vh, 8px); font-size: clamp(1.1em, 4.5vw, 1.4em); }
         #rulesMessage button {
-            margin-top: clamp(20px, 4vh, 25px);
+            margin-top: clamp(15px, 3vh, 20px);
             padding: clamp(12px, 3vw, 15px) clamp(25px, 6vw, 30px);
             border: none;
             border-radius: 30px;
@@ -140,7 +137,7 @@
             color: #4A00E0;
             font-weight: bold;
             cursor: pointer;
-            font-size: clamp(1em, 4vw, 1.1em);
+            font-size: clamp(1.2em, 5vw, 1.5em);
         }
         #gameCanvas, #cleaningCanvas {
             position: fixed;
@@ -153,8 +150,8 @@
         }
         #brush {
             position: fixed;
-            width: 80px;
-            height: 80px;
+            width: clamp(60px, 15vw, 80px);
+            height: clamp(60px, 15vw, 80px);
             background: url('assets/brush_icon.png') no-repeat center center;
             background-size: contain;
             pointer-events: none;
@@ -166,55 +163,51 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        @media (max-height: 600px) {
-            .ui-btn { padding: clamp(10px, 2.5vw, 12px) clamp(15px, 4vw, 20px); font-size: clamp(0.9em, 3.5vw, 1em); }
-            #startGame1Btn { bottom: clamp(120px, 18vh, 130px); }
-            #startGame2Btn { bottom: clamp(120px, 18vh, 130px); }
-            #rulesBtn { bottom: clamp(50px, 8vh, 60px); }
-            #soundBtn { bottom: clamp(50px, 8vh, 60px); }
-            #endBtn, #cleaningEndBtn, #stopBtn { bottom: clamp(10px, 2vh, 15px); }
+        @media (max-height: 500px) {
+            .ui-btn { padding: clamp(10px, 2.5vw, 12px) clamp(20px, 5vw, 25px); font-size: clamp(1em, 4vw, 1.2em); }
+            #startGame1Btn { bottom: clamp(130px, 20vh, 150px); }
+            #startGame2Btn { bottom: clamp(130px, 20vh, 150px); }
+            #rulesBtn { bottom: clamp(60px, 10vh, 70px); }
+            #soundBtn { bottom: clamp(60px, 10vh, 70px); }
+            #endBtn, #cleaningEndBtn, #stopBtn { bottom: clamp(8px, 1.5vh, 10px); }
+            .corner-btn { padding: clamp(10px, 2.5vw, 12px) clamp(15px, 4vw, 20px); font-size: clamp(0.9em, 3.5vw, 1em); }
         }
     </style>
 </head>
 <body>
     <div class="arjs-loader" id="loader">
-        <div class="pulse">🦷 Шукай візитівку, щоб почати пригоду!</div>
-        <div style="margin-top: clamp(15px, 3vh, 20px); font-size: clamp(1em, 4vw, 1.1em); font-weight: bold; color: #ff0000;">
-            ❗ Наведи камеру на маркер!
+        <div class="pulse">🦷 Знайди картку!</div>
+        <div style="margin-top: clamp(10px, 2vh, 15px); font-size: clamp(1em, 4vw, 1.2em); font-weight: bold; color: #ff0000;">
+            ❗ Подивись на картку!
         </div>
-        <div style="margin-top: clamp(8px, 2vh, 10px); font-size: clamp(0.8em, 3vw, 0.9em);">
-            Зубчик можеш покрутити і помасштабувати!
+        <div style="margin-top: clamp(5px, 1vh, 8px); font-size: clamp(0.8em, 3vw, 1em);">
+            Покрути зубчик! 😊
         </div>
     </div>
 
     <p id="timerText" class="ui-info-text" style="display: none;">⏳ Час: 00</p>
-    <p id="scoreText" class="ui-info-text" style="display: none;">🌟 Балів: 0</p>
+    <p id="scoreText" class="ui-info-text" style="display: none;">🌟 Бали: 0</p>
 
     <div id="rulesMessage">
-        <h3>📢 ПРАВИЛА ГРИ!</h3>
-        <p>Обирай, з чого почнемо, друже! 👇</p>
-        <hr style="border-color: #FFD700;">
+        <h3>🎉 Як грати?</h3>
         <ul>
-            <li>🥕 <strong>ГРА 1: Вибір.</strong> Клікай <strong>ТІЛЬКИ</strong> на корисну їжу (🍎, 🦷, 🪥). Це <strong>+10 балів</strong>!</li>
-            <li>🍭 <strong>Шкідлива їжа</strong> (🍔, 🍟) бали <strong>НЕ ЗНІМАЄ</strong>, але й не дає!</li>
-            <hr style="border-color: #FFD700;">
-            <li>🧼 <strong>ГРА 2: Чистка.</strong> Швидко <strong>витирай</strong> жовті плями з зубчика, використовуючи щітку. Кожна пляма <strong>+10 балів</strong>!</li>
+            <li>🥕 <strong>Гра 1</strong>: Тисни на 🍎 🦷 🪥! Отримуй <strong>+10</strong>! 🍔 🍟 – не чіпай!</li>
+            <li>🧼 <strong>Гра 2</strong>: Чисти 🦷 від плям щіткою! Пляма = <strong>+10</strong>!</li>
         </ul>
-        <p style="font-size: 1.1em; margin-top: 20px; font-weight: bold;">Готовий?</p>
-        <button id="closeRulesBtn">Почали!</button>
+        <button id="closeRulesBtn">Грати! 🚀</button>
     </div>
 
     <div id="endMessage"></div>
 
     <div id="canvasGameContainer" style="display: none;">
         <canvas id="gameCanvas"></canvas>
-        <button id="endBtn" class="ui-btn">▶️ Чистити зубчик!</button>
+        <button id="endBtn" class="ui-btn">▶️ Чисти зубчик!</button>
     </div>
 
     <div id="cleaningGameContainer" style="display: none;">
         <canvas id="cleaningCanvas"></canvas>
         <div id="brush"></div>
-        <button id="cleaningEndBtn" class="ui-btn">✅ Я почистив!</button>
+        <button id="cleaningEndBtn" class="ui-btn">✅ Готово!</button>
     </div>
 
     <a-scene
@@ -257,11 +250,11 @@
         </a-entity>
     </a-scene>
 
-    <button id="soundBtn" class="ui-btn">🔊 Увімкнути звук</button>
-    <button id="rulesBtn" class="ui-btn">❓ Правила</button>
-    <button id="startGame1Btn" class="ui-btn">🥕 Гра 1: Вибір</button>
-    <button id="startGame2Btn" class="ui-btn">🧼 Гра 2: Чистка</button>
-    <button id="stopBtn" class="ui-btn" style="display: none;">❌ Вихід</button>
+    <button id="soundBtn" class="ui-btn">🔊 Звук</button>
+    <button id="rulesBtn" class="ui-btn">❓ Як грати?</button>
+    <button id="startGame1Btn" class="ui-btn">🥕 Гра 1</button>
+    <button id="startGame2Btn" class="ui-btn">🧼 Гра 2</button>
+    <button id="stopBtn" class="ui-btn" style="display: none;">❌ Стоп</button>
     <a href="https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi" id="youtubeBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">❤️ Автор</a>
     <a href="https://nikadent-family.com.ua/ua/" id="aboutBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">ℹ️ Про нас</a>
 
@@ -322,7 +315,7 @@
         toothClickSound.muted = true;
         goodSound.muted = true;
         missSound.muted = true;
-        soundBtn.textContent = "🔊 Увімкнути звук";
+        soundBtn.textContent = "🔊 Звук";
 
         // === 1. КЕРУВАННЯ ЖЕСТАМИ ДЛЯ AR-МОДЕЛІ ===
         AFRAME.registerComponent('touch-gestures', {
@@ -408,7 +401,7 @@
                     dir: 'alternate',
                     loop: 2
                 });
-                endMessage.textContent = "🦷 Привіт, друже! Покрути мене і почнемо гру!";
+                endMessage.textContent = "🦷 Привіт! Покрути мене і грай! 😊";
                 endMessage.style.display = 'block';
                 setTimeout(() => { endMessage.style.display = 'none'; }, 3000);
             }
@@ -459,7 +452,7 @@
             toothClickSound.muted = isMuted;
             goodSound.muted = isMuted;
             missSound.muted = isMuted;
-            soundBtn.textContent = isMuted ? "🔊 Увімкнути звук" : "🔇 Вимкнути звук";
+            soundBtn.textContent = isMuted ? "🔊 Звук" : "🔇 Без звуку";
             if (!isMuted && isGameRunning) {
                 bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
             } else if (isMuted) {
@@ -473,7 +466,7 @@
             isGameRunning = true;
             isPaused = false;
             score = 0;
-            scoreText.textContent = `🌟 Балів: 0`;
+            scoreText.textContent = `🌟 Бали: 0`;
             stopBtn.style.display = 'block';
             document.querySelector('a-scene').style.display = 'none';
             startGame1Btn.style.display = 'none';
@@ -587,7 +580,7 @@
                             missSound.play().catch(e => console.log("🔇 Звук не запустився:", e));
                         }
                     }
-                    scoreText.textContent = `🌟 Балів: ${score}`;
+                    scoreText.textContent = `🌟 Бали: ${score}`;
                     fallingItems.splice(i, 1);
                     break;
                 }
@@ -630,7 +623,7 @@
             gameCanvas.removeEventListener('click', handleItemClick);
             gameCanvas.removeEventListener('touchstart', handleItemClick);
             endBtn.removeEventListener('click', endGame1);
-            endMessage.textContent = `🎉 Клас! Балів: ${score}! А тепер швидше за щітку! 🧼`;
+            endMessage.textContent = `🎉 Супер! Бали: ${score}! Чистимо зубчик? 🧼`;
             endMessage.style.display = 'block';
             setTimeout(() => {
                 endMessage.style.display = 'none';
@@ -660,7 +653,7 @@
             const toothSize = Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.4;
             const toothX = cleaningCanvas.width / 2;
             const toothY = cleaningCanvas.height / 2;
-            const toothWidth = toothSize * 0.6; // Уявний прямокутник для емодзі
+            const toothWidth = toothSize * 0.6;
             const toothHeight = toothSize;
             for (let i = 0; i < 8; i++) {
                 const offsetX = (Math.random() - 0.5) * toothWidth;
@@ -691,7 +684,7 @@
                 if (Math.sqrt(dx * dx + dy * dy) < patch.size + 15) {
                     patch.isCleaned = true;
                     score += 10;
-                    scoreText.textContent = `🌟 Балів: ${score}`;
+                    scoreText.textContent = `🌟 Бали: ${score}`;
                     if (!applauseSound.muted) {
                         applauseSound.currentTime = 0;
                         applauseSound.play().catch(e => console.log("🔇 Звук не запустився:", e));
@@ -710,7 +703,6 @@
             const toothX = cleaningCanvas.width / 2;
             const toothY = cleaningCanvas.height / 2;
 
-            // Малюємо емодзі зуба
             ctx.font = `${toothSize}px 'Comic Neue', sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -720,7 +712,6 @@
             ctx.lineWidth = 3;
             ctx.strokeText('🦷', toothX, toothY);
 
-            // Малюємо плями
             dirtPatches.forEach(patch => {
                 if (!patch.isCleaned) {
                     ctx.beginPath();
@@ -730,7 +721,6 @@
                 }
             });
 
-            // Текст після очищення
             if (dirtPatches.every(p => p.isCleaned)) {
                 ctx.font = `clamp(50px, 8vw, 60px) 'Comic Neue', sans-serif`;
                 ctx.fillStyle = '#4CAF50';
@@ -743,8 +733,8 @@
             if (!isCleaning || isPaused) return;
             const pos = getMousePos(e);
             brushElement.style.display = 'block';
-            brushElement.style.left = (pos.x - 40) + 'px';
-            brushElement.style.top = (pos.y - 40) + 'px';
+            brushElement.style.left = (pos.x - clamp(30, 7.5vw, 40)) + 'px';
+            brushElement.style.top = (pos.y - clamp(30, 7.5vw, 40)) + 'px';
             clean(pos);
         }
 
@@ -797,13 +787,13 @@
                 applauseSound.play().catch(e => console.log("🔇 Звук не запустився:", e));
             }
             endMessage.textContent = allCleaned
-                ? `🌟 ТИ СУПЕР! Ідеальна чистка! Твій рахунок: ${score} балів! 🎉`
-                : `💡 Час вийшов! Твій рахунок: ${score} балів! Спробуй ще!`;
+                ? `🌟 Клас! Зубчик чистий! Бали: ${score}! 🎉`
+                : `💡 Час вийшов! Бали: ${score}! Ще раз?`;
             endMessage.style.display = 'block';
             setTimeout(() => {
                 endMessage.style.display = 'none';
                 stopGame();
-            }, 5000);
+            }, 4000);
         }
 
         // === 8. КЕРУВАННЯ КНОПКАМИ ===
