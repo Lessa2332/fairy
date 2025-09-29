@@ -67,7 +67,7 @@
             display: none;
             font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
             text-transform: none;
-            animation: pulse 2s infinite;
+            animation: pulse-btn 2s infinite;
         }
         .game-btn:nth-child(1) {
             bottom: 35vh;
@@ -121,7 +121,7 @@
             cursor: pointer;
             text-decoration: none;
             text-transform: none;
-            animation: pulse 2s infinite;
+            animation: pulse-btn 2s infinite;
         }
         #youtubeBtn:hover {
             box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4);
@@ -143,7 +143,7 @@
             cursor: pointer;
             text-decoration: none;
             text-transform: none;
-            animation: pulse 2s infinite;
+            animation: pulse-btn 2s infinite;
         }
         #aboutBtn:hover {
             box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4);
@@ -205,47 +205,33 @@
             z-index: 1000;
             display: none;
         }
-        @keyframes pulse {
-            0% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.05); }
-            100% { transform: translateX(-50%) scale(1); }
-        }
         @keyframes pulse-btn {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        .pulse {
-            animation: pulse-btn 2s infinite;
-        }
     </style>
 </head>
 <body>
     <div class="arjs-loader" id="loader">
-        <div class="pulse">🦷 Ласкаво просимо до Nikadent Family!</div>
+        <div>🦷 Ласкаво просимо до Nikadent Family!</div>
         <div style="margin-top: 20px; font-size: 1.1em;">
             Натисни кнопку, щоб почати гру!
         </div>
     </div>
-
     <p id="welcomeText">Вибери гру, щоб почати! 🦷</p>
     <p id="timerText" class="ui-info-text">⏳ Час: 00</p>
     <p id="scoreText" class="ui-info-text">🌟 Балів: 0</p>
-
     <div id="canvasGameContainer" style="display: none;">
         <canvas id="gameCanvas"></canvas>
     </div>
-
     <div id="cleaningGameContainer" style="display: none;">
         <canvas id="cleaningCanvas"></canvas>
     </div>
-
     <div id="detectiveGameContainer" style="display: none;">
         <canvas id="detectiveCanvas"></canvas>
     </div>
-
     <div id="endMessage"></div>
-
     <a-scene
         mindar-image="imageTargetSrc: my-marker.mind;"
         vr-mode-ui="enabled: false"
@@ -259,9 +245,7 @@
             <a-asset-item id="toothModel" src="assets/3d_models/a-gltf-model.glb"></a-asset-item>
             <audio id="bg-music" src="assets/audio/sound4.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
             <audio id="applauseSound" src="assets/audio/applause.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
-            <audio id="detectiveSound" src="assets/audio/detective.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
         </a-assets>
-
         <a-camera
             look-controls="enabled: false"
             position="0 0 0"
@@ -274,7 +258,6 @@
                 material="color: #FFD700; shader: flat"
             ></a-cursor>
         </a-camera>
-
         <a-entity mindar-image-target="targetIndex: 0">
             <a-gltf-model
                 id="tooth-model"
@@ -290,7 +273,6 @@
             </a-gltf-model>
         </a-entity>
     </a-scene>
-
     <button id="game1Btn" class="ui-btn game-btn">🎯 Здоровий Вибір</button>
     <button id="game2Btn" class="ui-btn game-btn">🪥 Чистка Зубів</button>
     <button id="game3Btn" class="ui-btn game-btn">🔍 Зубний Детектив</button>
@@ -324,7 +306,6 @@
         const welcomeText = document.getElementById('welcomeText');
         const bgMusic = document.querySelector('#bg-music');
         const applauseSound = document.querySelector('#applauseSound');
-        const detectiveSound = document.querySelector('#detectiveSound');
         const endMessage = document.getElementById('endMessage');
 
         let isGameRunning = false;
@@ -338,7 +319,7 @@
         let animationFrameId = null;
 
         // Перевірка завантаження аудіо
-        [bgMusic, applauseSound, detectiveSound].forEach(audio => {
+        [bgMusic, applauseSound].forEach(audio => {
             audio.addEventListener('error', () => {
                 console.warn(`Помилка завантаження аудіо: ${audio.src}`);
             });
@@ -363,13 +344,11 @@
             const isMuted = bgMusic.muted;
             bgMusic.muted = !isMuted;
             applauseSound.muted = !isMuted;
-            detectiveSound.muted = !isMuted;
             soundBtn.textContent = isMuted ? "🔇 Вимкнути звук" : "🔊 Увімкнути звук";
             if (!bgMusic.muted) {
                 bgMusic.play().catch(e => console.log("🔇 Звук не запустився:", e));
             }
         }
-
         soundBtn.addEventListener('click', toggleSound);
 
         // Обробка YouTube та "Про нас"
@@ -450,7 +429,6 @@
             }
             lastTap = now;
         }
-
         document.addEventListener('touchstart', handleDoubleTap);
         document.addEventListener('click', handleDoubleTap);
 
@@ -777,6 +755,7 @@
 
             canvas.addEventListener('click', touchHandler);
             canvas.addEventListener('touchstart', touchHandler, { passive: false });
+
             inputHandler = touchHandler;
 
             function animateCleaning() {
@@ -820,16 +799,17 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            if (detectiveSound && !detectiveSound.muted) {
-                detectiveSound.play().catch(e => console.log("🔇 Детективний звук не запустився:", e));
+            if (bgMusic && !bgMusic.muted) {
+                bgMusic.play().catch(e => console.log("🔇 Фонова музика не запустилася:", e));
             }
 
             const items = [
                 { emoji: '🪥', name: 'Зубна щітка' },
                 { emoji: '🍎', name: 'Яблуко' },
                 { emoji: '🍬', name: 'Цукерка' },
-                { emoji: '🪩', name: 'Зубна паста' }
+                { emoji: '🧴', name: 'Зубна паста' } // ✅ Виправлено: 🪩 → 🧴
             ];
+
             let round = 0;
             const maxRounds = 5;
             let shownItems = [];
@@ -853,10 +833,7 @@
                 scoreText.textContent = `🌟 Балів: ${score}`;
                 timerText.style.display = 'block';
                 scoreText.style.display = 'block';
-                if (detectiveSound && !detectiveSound.muted) {
-                    detectiveSound.currentTime = 0;
-                    detectiveSound.play().catch(e => console.log("🔇 Детективний звук не запустився:", e));
-                }
+
                 const timer = setInterval(() => {
                     if (!isGameRunning || isPaused) return;
                     timeLeft--;
