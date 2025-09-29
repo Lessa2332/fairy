@@ -107,7 +107,7 @@
             font-size: clamp(1.4em, 5vw, 1.8em);
         }
         #scoreText { top: clamp(40px, 8vh, 50px); }
-        #endMessage, #rulesMessage {
+        #endMessage, #rulesMessage, #listenMessage {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -128,7 +128,7 @@
         #rulesMessage h3 { font-size: clamp(1.4em, 6vw, 1.8em); margin: clamp(5px, 1vh, 10px) 0; }
         #rulesMessage ul { text-align: left; list-style-type: '👉 '; padding-left: clamp(15px, 4vw, 20px); margin: clamp(5px, 1vh, 10px) 0; }
         #rulesMessage li { margin-bottom: clamp(5px, 1.5vh, 8px); font-size: clamp(1.1em, 4.5vw, 1.4em); }
-        #rulesMessage button {
+        #rulesMessage button, #listenMessage button {
             margin-top: clamp(15px, 3vh, 20px);
             padding: clamp(12px, 3vw, 15px) clamp(25px, 6vw, 30px);
             border: none;
@@ -198,6 +198,10 @@
     </div>
 
     <div id="endMessage"></div>
+    <div id="listenMessage">
+        <p>🦷 Привіт! Хочеш послухати? 😊</p>
+        <button id="listenBtn">Послухати 🎶</button>
+    </div>
 
     <div id="canvasGameContainer" style="display: none;">
         <canvas id="gameCanvas"></canvas>
@@ -221,11 +225,11 @@
     >
         <a-assets>
             <a-asset-item id="toothModel" src="assets/3d_models/a-gltf-model.glb"></a-asset-item>
-            <audio id="bg-music" src="assets/audio/sound4.mp3" preload="auto" loop muted playsinline crossorigin="anonymous"></audio>
+            <audio id="bg-music" src="assets/audio/sound1.mp3" preload="auto" loop muted playsinline crossorigin="anonymous"></audio>
             <audio id="applauseSound" src="assets/audio/applause.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
             <audio id="toothClickSound" src="assets/audio/sound5.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
-            <audio id="goodSound" src="assets/audio/good.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
-            <audio id="missSound" src="assets/audio/miss.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
+            <audio id="goodSound" src="assets/audio/sound5.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
+            <audio id="missSound" src="assets/audio/sound4.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
         </a-assets>
         <a-camera look-controls="enabled: false" position="0 0 0">
             <a-cursor
@@ -291,6 +295,8 @@
         const toothClickSound = document.querySelector('#toothClickSound');
         const goodSound = document.querySelector('#goodSound');
         const missSound = document.querySelector('#missSound');
+        const listenMessage = document.getElementById('listenMessage');
+        const listenBtn = document.getElementById('listenBtn');
 
         let isGameRunning = false;
         let isPaused = false;
@@ -414,6 +420,7 @@
             toothModel.object3D.visible = true;
             loader.style.display = 'none';
             if (!isGameRunning) updateUIOnTarget();
+            listenMessage.style.display = 'block';
             if (!bgMusic.muted) bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
         });
 
@@ -423,6 +430,7 @@
             if (!isGameRunning) {
                 updateUIOnTarget();
             }
+            listenMessage.style.display = 'none';
         });
 
         setInterval(updateUIOnTarget, 500);
@@ -461,6 +469,15 @@
         }
         soundBtn.addEventListener('click', toggleSound);
 
+        listenBtn.addEventListener('click', () => {
+            if (!bgMusic.muted) {
+                bgMusic.currentTime = 0;
+                bgMusic.play().catch(e => console.log("🔇 Звук не запустився:", e));
+            }
+            listenMessage.style.display = 'none';
+        });
+        setTimeout(() => { if (listenMessage.style.display === 'block') listenMessage.style.display = 'none'; }, 5000);
+
         // === 5. ЛОГІКА ГРИ ===
         function startCanvasGame(duration) {
             isGameRunning = true;
@@ -477,6 +494,7 @@
             aboutBtn.style.display = 'none';
             timerText.style.display = 'block';
             scoreText.style.display = 'block';
+            listenMessage.style.display = 'none';
             if (!bgMusic.muted) bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
 
             if (duration > 0) {
