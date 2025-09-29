@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦷 Nikadent Family </title>
+    <title>🦷 AR Зубна Фея — Інтерактивний Зубчик</title>
 
     <!-- A-Frame + MindAR -->
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
@@ -109,6 +109,27 @@
         #youtubeBtn:hover {
             box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4);
         }
+        #aboutBtn {
+            position: fixed;
+            bottom: 20px;
+            left: 120px; /* Праворуч від YouTube */
+            transform: none;
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #54a0ff, #5f27cd);
+            color: white;
+            border-radius: 25px;
+            font-size: 0.95em;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            z-index: 1100;
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: none;
+        }
+        #aboutBtn:hover {
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4);
+        }
         .ui-info-text {
             position: fixed;
             left: 10px;
@@ -166,6 +187,11 @@
         <button id="endBtn" class="ui-btn">🛑 Завершити</button>
     </div>
 
+    <div id="cleaningGameContainer" style="display: none;">
+        <canvas id="cleaningCanvas"></canvas>
+        <button id="cleaningEndBtn" class="ui-btn">✅ Готово!</button>
+    </div>
+
     <div id="endMessage" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(74,21,75,0.9); color:white; padding:20px; border-radius:15px; z-index:10000; font-size:1.2em; text-align:center; font-family:'Comic Neue', 'Comic Sans MS', cursive; box-shadow:0 8px 20px rgba(0,0,0,0.4);">
     </div>
 
@@ -179,7 +205,8 @@
     >
         <a-assets>
             <a-asset-item id="toothModel" src="assets/3d_models/a-gltf-model.glb"></a-asset-item>
-            <audio id="bg-music" src="assets/audio/sound1.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
+            <audio id="bg-music" src="assets/audio/sound4.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
+            <audio id="applauseSound" src="assets/audio/applause.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
         </a-assets>
 
         <a-camera
@@ -199,10 +226,11 @@
             <a-gltf-model
                 id="tooth-model"
                 src="#toothModel"
-                scale="0.6 0.6 0.6"  <!-- У 3 рази більше -->
-                position="0 0 0.1"   <!-- Центрально над маркером -->
+                scale="0.3 0.3 0.3"
+                position="0 0 0.1"
                 rotation="0 0 0"
-                shadow>
+                shadow
+                animation-mixer="clip: Idle; loop: repeat; timeScale: 1.0; autoplay: true;">
                 <a-box visible="false" transparent="true" opacity="0.1" 
                        width="1" height="1" depth="1" position="0 0 0">
                 </a-box> 
@@ -215,6 +243,7 @@
     <button id="resetBtn" class="ui-btn">🔄 Спробувати ще!</button>
     <button id="soundBtn" class="ui-btn" style="display: none;">🔊 Увімкнути звук</button>
     <a href="https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi" id="youtubeBtn" target="_blank">❤️ Автор SmartLessa</a>
+    <a href="https://nikadent-family.com.ua/ua/" id="aboutBtn" target="_blank">ℹ️ Про нас</a>
 
     <script>
         function fixHeight() {
@@ -231,9 +260,11 @@
         const resetBtn = document.querySelector('#resetBtn');
         const soundBtn = document.querySelector('#soundBtn');
         const youtubeBtn = document.querySelector('#youtubeBtn');
+        const aboutBtn = document.querySelector('#aboutBtn');
         const timerText = document.getElementById('timerText');
         const scoreText = document.getElementById('scoreText');
         const bgMusic = document.querySelector('#bg-music');
+        const applauseSound = document.querySelector('#applauseSound');
         const endMessage = document.getElementById('endMessage');
 
         let isGameRunning = false;
@@ -266,6 +297,7 @@
                 playBtn.style.display = 'block';
                 soundBtn.style.display = 'block';
                 youtubeBtn.style.display = 'block';
+                aboutBtn.style.display = 'block'; // Додано!
             }
         });
 
@@ -274,6 +306,7 @@
             playBtn.style.display = 'none';
             soundBtn.style.display = 'none';
             youtubeBtn.style.display = 'none';
+            aboutBtn.style.display = 'none'; // Додано!
             resetBtn.style.display = 'none';
             timerText.style.display = 'none';
             scoreText.style.display = 'none';
@@ -283,14 +316,22 @@
         stopBtn.addEventListener('click', stopGame);
         resetBtn.addEventListener('click', resetGame);
 
+        // YouTube-кнопка — виправлена
         youtubeBtn.addEventListener('click', () => {
-            console.log("🔗 Клік по YouTube-кнопці!");
             window.open('https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi', '_blank');
         });
         youtubeBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            console.log("🔗 Сенсорний клік по YouTube-кнопці!");
             window.open('https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi', '_blank');
+        });
+
+        // Кнопка "Про нас"
+        aboutBtn.addEventListener('click', () => {
+            window.open('https://nikadent-family.com.ua/ua/', '_blank');
+        });
+        aboutBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            window.open('https://nikadent-family.com.ua/ua/', '_blank');
         });
 
         function startCanvasGame() {
@@ -299,6 +340,7 @@
             playBtn.style.display = 'none';
             soundBtn.style.display = 'none';
             youtubeBtn.style.display = 'none';
+            aboutBtn.style.display = 'none'; // Приховуємо під час гри
             stopBtn.style.display = 'block';
             resetBtn.style.display = 'none';
             document.querySelector('a-scene').style.display = 'none';
@@ -314,7 +356,9 @@
             playBtn.style.display = 'block';
             soundBtn.style.display = 'block';
             youtubeBtn.style.display = 'block';
+            aboutBtn.style.display = 'block'; // Показуємо знову
             document.getElementById('canvasGameContainer').style.display = 'none';
+            document.getElementById('cleaningGameContainer').style.display = 'none';
             document.querySelector('a-scene').style.display = 'block';
             timerText.style.display = 'none';
             scoreText.style.display = 'none';
@@ -334,6 +378,7 @@
             playBtn.style.display = 'block';
             soundBtn.style.display = 'block';
             youtubeBtn.style.display = 'block';
+            aboutBtn.style.display = 'block'; // Показуємо
             resetBtn.style.display = 'none';
             bgMusic.pause();
             bgMusic.muted = true;
@@ -350,12 +395,11 @@
                 bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
             }
 
-            // Корисні та шкідливі емоджі
             const goodEmojis = ['🦷', '🧚🏻', '🚰', '🪥', '🍎', '🍏'];
             const badEmojis = ['🍔', '🍟', '🍕', '🍦', '🍭', '🍫', '🧁'];
 
             function createEmoji() {
-                const isGood = Math.random() > 0.5; // 50% шанс корисного
+                const isGood = Math.random() > 0.5;
                 return {
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
@@ -404,21 +448,14 @@
                         emoji.fadeOut = 1;
 
                         if (emoji.isGood) {
-                            score += 10; // +10 за корисне
-                            emoji.value = '✨'; // або можна залишити оригінал
+                            score += 10;
+                            emoji.value = '✨';
                         } else {
-                            score -= 5; // -5 за шкідливе
-                            emoji.value = '💥'; // візуальна підказка
+                            score -= 5;
+                            emoji.value = '💥';
                         }
 
                         scoreText.textContent = `🌟 Балів: ${score}`;
-                        if (emoji.isGood) {
-                            // Не додаємо новий — поки що просто очолюємо
-                        } else {
-                            // Якщо натиснули шкідливе — не додаємо
-                        }
-
-                        // Звук при натисканні (можна додати окремий)
                         if (bgMusic && !bgMusic.muted) {
                             bgMusic.currentTime = 0;
                             bgMusic.play().catch(e => console.log("🔇 Звук не запустився:", e));
@@ -430,12 +467,8 @@
             canvas.addEventListener('click', inputHandler);
             canvas.addEventListener('touchstart', inputHandler, { passive: false });
 
-            let lastTime = Date.now();
             function animate() {
                 if (!isGameRunning) return;
-
-                const now = Date.now();
-                lastTime = now;
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -459,7 +492,6 @@
                     ctx.globalAlpha = 1;
                 });
 
-                // Додаємо нові емоджі, якщо менше 10
                 if (emojis.length < 10) {
                     emojis.push(createEmoji());
                 }
@@ -478,25 +510,134 @@
             function endCanvasGame() {
                 isGameRunning = false;
                 stopBtn.style.display = 'none';
-                resetBtn.style.display = 'block';
+                resetBtn.style.display = 'none';
                 timerText.style.display = 'none';
                 scoreText.style.display = 'none';
-                endMessage.textContent = `Гра завершена! Твій результат: ${score} балів! 🦷✨`;
-                endMessage.style.display = 'block';
-                bgMusic.pause();
-                bgMusic.muted = true;
-                soundBtn.textContent = "🔊 Увімкнути звук";
 
+                // Переходимо до міні-гри "Чистка зубів"
+                document.getElementById('canvasGameContainer').style.display = 'none';
+                document.getElementById('cleaningGameContainer').style.display = 'block';
+                initCleaningGame();
+            }
+
+            document.getElementById('endBtn').addEventListener('click', endCanvasGame);
+            requestAnimationFrame(animate);
+        }
+
+        function initCleaningGame() {
+            const canvas = document.getElementById('cleaningCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const toothX = canvas.width / 2;
+            const toothY = canvas.height / 2;
+            const toothRadius = 80;
+
+            // Створюємо плями
+            const spots = [];
+            for (let i = 0; i < 8; i++) {
+                spots.push({
+                    x: toothX + (Math.random() - 0.5) * 100,
+                    y: toothY + (Math.random() - 0.5) * 100,
+                    size: 15 + Math.random() * 10,
+                    cleaned: false
+                });
+            }
+
+            let cleaningTime = 20;
+            let lastTime = Date.now();
+
+            function drawTooth() {
+                ctx.beginPath();
+                ctx.arc(toothX, toothY, toothRadius, 0, Math.PI * 2);
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fill();
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Малюємо плями
+                spots.forEach(spot => {
+                    if (!spot.cleaned) {
+                        ctx.beginPath();
+                        ctx.arc(spot.x, spot.y, spot.size, 0, Math.PI * 2);
+                        ctx.fillStyle = '#FFD700'; // жовта пляма
+                        ctx.fill();
+                    }
+                });
+            }
+
+            function checkClean(x, y) {
+                spots.forEach(spot => {
+                    if (spot.cleaned) return;
+                    const dx = x - spot.x;
+                    const dy = y - spot.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < spot.size + 20) { // зона чищення
+                        spot.cleaned = true;
+                    }
+                });
+            }
+
+            function updateTimer() {
+                const now = Date.now();
+                const elapsed = Math.floor((now - lastTime) / 1000);
+                cleaningTime = Math.max(0, 20 - elapsed);
+                timerText.textContent = `⏳ Час: ${String(cleaningTime).padStart(2, '0')}`;
+                if (cleaningTime <= 0) {
+                    endCleaningGame();
+                }
+            }
+
+            function endCleaningGame() {
+                const allCleaned = spots.every(s => s.cleaned);
+                if (allCleaned) {
+                    // Аплодисменти
+                    if (applauseSound && !applauseSound.muted) {
+                        applauseSound.currentTime = 0;
+                        applauseSound.play().catch(e => console.log("🔇 Аплодисменти не запустилися:", e));
+                    }
+                    endMessage.textContent = "🎉 Тепер зубчик чистий! Лікар буде задоволений! 🦷✨";
+                } else {
+                    endMessage.textContent = "💡 Не всі плями зняті — спробуй ще!";
+                }
+                endMessage.style.display = 'block';
                 setTimeout(() => {
                     endMessage.style.display = 'none';
                     stopGame();
                 }, 5000);
             }
 
-            document.getElementById('endBtn').addEventListener('click', endCanvasGame);
-            requestAnimationFrame(animate);
+            let touchHandler = null;
+
+            touchHandler = (e) => {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+                checkClean(x, y);
+            };
+
+            canvas.addEventListener('click', touchHandler);
+            canvas.addEventListener('touchstart', touchHandler, { passive: false });
+
+            function animateCleaning() {
+                if (!isGameRunning) return;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawTooth();
+                updateTimer();
+
+                requestAnimationFrame(animateCleaning);
+            }
+
+            document.getElementById('cleaningEndBtn').addEventListener('click', endCleaningGame);
+
+            requestAnimationFrame(animateCleaning);
         }
     </script>
 </body>
 </html>
-
