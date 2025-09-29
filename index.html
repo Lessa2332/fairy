@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ... (CSS СТИЛІ ЗАЛИШАЮТЬСЯ ЯК У ПОПЕРЕДНІЙ ВІДПОВІДІ) ... */
         html, body {
             margin: 0;
             padding: 0;
@@ -51,17 +50,17 @@
             font-family: 'Comic Neue', sans-serif;
             text-transform: none;
         }
+        
+        /* === НОВЕ РОЗТАШУВАННЯ КНОПОК === */
         .ui-btn {
             position: fixed;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 14px 25px;
-            border-radius: 30px;
-            font-size: 1.1em;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 1em;
             font-weight: bold;
             text-decoration: none;
             z-index: 1000;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             transition: all 0.2s ease;
             cursor: pointer;
             border: none;
@@ -69,12 +68,33 @@
             font-family: 'Comic Neue', sans-serif;
             text-transform: none;
             white-space: nowrap;
+            width: 40%; /* Обмежимо ширину */
+            max-width: 200px;
         }
-        #startGame1Btn { bottom: 180px; background: linear-gradient(45deg, #FF6B6B, #FF8E53); color: white; }
-        #startGame2Btn { bottom: 110px; background: linear-gradient(45deg, #87CEFA, #4682B4); color: white; }
-        #stopBtn { bottom: 180px; background: linear-gradient(45deg, #ff4757, #ff6b81); color: white; }
-        #rulesBtn { bottom: 250px; background: linear-gradient(45deg, #FFD700, #FFA500); color: black; padding: 14px 20px; }
-        #soundBtn { bottom: 320px; background: linear-gradient(45deg, #00CED1, #20B2AA); color: white; }
+
+        /* Ліва колонка (Інфо) */
+        #soundBtn { bottom: 200px; left: 10px; right: auto; background: linear-gradient(45deg, #00CED1, #20B2AA); color: white; }
+        #rulesBtn { bottom: 130px; left: 10px; right: auto; background: linear-gradient(45deg, #FFD700, #FFA500); color: black; }
+        
+        /* Права колонка (Старт Гри) */
+        #startGame1Btn { bottom: 200px; right: 10px; left: auto; background: linear-gradient(45deg, #FF6B6B, #FF8E53); color: white; }
+        #startGame2Btn { bottom: 130px; right: 10px; left: auto; background: linear-gradient(45deg, #87CEFA, #4682B4); color: white; }
+        
+        /* Кнопки під час гри (по центру) */
+        #endBtn, #cleaningEndBtn, #stopBtn {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 25px;
+            font-size: 1.1em;
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Кутові кнопки */
         .corner-btn {
             position: fixed;
             bottom: 20px;
@@ -92,6 +112,8 @@
         }
         #youtubeBtn { left: 20px; background: linear-gradient(45deg, #ff4757, #ff6348); color: white; }
         #aboutBtn { right: 20px; background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; animation: none; }
+        
+        /* ... (Інші стилі залишаються без змін) ... */
         .ui-info-text {
             position: fixed; left: 10px; top: 10px; z-index: 500;
             font-family: 'Comic Neue'; text-align: left; font-weight: bold;
@@ -119,22 +141,16 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        @media (max-height: 700px) {
-            #startGame1Btn { bottom: 160px; }
-            #startGame2Btn { bottom: 100px; }
-            #rulesBtn { bottom: 220px; }
-            #soundBtn { bottom: 280px; }
-        }
     </style>
 </head>
 <body>
     <div class="arjs-loader" id="loader">
         <div class="pulse">🦷 Ласкаво просимо до "Nikadent-Family"!</div>
         <div style="margin-top: 20px; font-size: 1.1em; font-weight: bold; color: #ff0000;">
-            ❗ Увага: Наведи камеру на візитівку, щоб побачити зубчик і почати гру!
+            ❗ Увага: Наведи камеру на візитівку, щоб побачити зубчик!
         </div>
         <div style="margin-top: 10px; font-size: 0.9em;">
-            Постукай, покрути та помасштабуй зубчик! 😊
+            Постукай, покрути та помасштабуй зубчик перед грою! 😊
         </div>
     </div>
 
@@ -161,12 +177,12 @@
 
     <div id="canvasGameContainer" style="display: none;">
         <canvas id="gameCanvas"></canvas>
-        <button id="endBtn" class="ui-btn" style="bottom: 40px; display: block;">🛑 Перехід до чистки</button>
+        <button id="endBtn" class="ui-btn" style="display: block;">🛑 Перехід до чистки</button>
     </div>
 
     <div id="cleaningGameContainer" style="display: none;">
         <canvas id="cleaningCanvas"></canvas>
-        <button id="cleaningEndBtn" class="ui-btn" style="bottom: 40px; display: block;">✅ Готово!</button>
+        <button id="cleaningEndBtn" class="ui-btn" style="display: block;">✅ Готово!</button>
     </div>
 
     <a-scene
@@ -176,7 +192,8 @@
         loading-screen="enabled: false"
         embedded
         renderer="colorManagement: true; physicallyCorrectLights: true;"
-        touch-gestures="targetId: tooth-model; initialScale: 0.3;" >
+        touch-gestures="targetId: tooth-model; initialScale: 0.3;"
+    >
         <a-assets>
             <a-asset-item id="toothModel" src="assets/3d_models/a-gltf-model.glb"></a-asset-item>
             <audio id="bg-music" src="assets/audio/sound4.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
@@ -211,11 +228,12 @@
         </a-entity>
     </a-scene>
 
-    <button id="startGame1Btn" class="ui-btn">🚀 Гра 1: Здоровий Вибір</button>
-    <button id="startGame2Btn" class="ui-btn">🧼 Гра 2: Чистка Зубів</button>
-    <button id="stopBtn" class="ui-btn" style="display: none;">⏸ Пауза</button>
-    <button id="rulesBtn" class="ui-btn">❓ Правила Гри</button>
     <button id="soundBtn" class="ui-btn">🔊 Увімкнути звук</button>
+    <button id="rulesBtn" class="ui-btn">❓ Правила Гри</button>
+    <button id="startGame1Btn" class="ui-btn">🚀 Гра 1: Вибір</button>
+    <button id="startGame2Btn" class="ui-btn">🧼 Гра 2: Чистка</button>
+    <button id="stopBtn" class="ui-btn" style="display: none;">⏸ Пауза</button>
+    
     <a href="https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi" id="youtubeBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">❤️ Автор</a>
     <a href="https://nikadent-family.com.ua/ua/" id="aboutBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">ℹ️ Про нас</a>
 
@@ -255,7 +273,9 @@
         let lastTap = 0;
         let currentGame = null;
 
-        soundBtn.textContent = bgMusic.muted ? "🔊 Увімкнути звук" : "🔇 Вимкнути звук";
+        // Встановлюємо початковий стан кнопки Звук
+        bgMusic.muted = true; // Примусово вимикаємо на старті для автозапуску на iOS/Android
+        soundBtn.textContent = "🔊 Увімкнути звук";
         
         // =========================================================
         // === 1. КОМПОНЕНТ ДЛЯ ОБРОБКИ ЖЕСТІВ (ОБЕРТАННЯ/МАСШТАБ) ===
@@ -263,11 +283,11 @@
 
         AFRAME.registerComponent('touch-gestures', {
             schema: {
-                targetId: { type: 'string', default: '' }, // ID моделі, якою керуємо
-                initialScale: { type: 'number', default: 1.0 },
+                targetId: { type: 'string', default: '' },
+                initialScale: { type: 'number', default: 0.3 }, // Використовуємо 0.3 як початковий
                 minScale: { type: 'number', default: 0.15 },
                 maxScale: { type: 'number', default: 1.0 },
-                rotationSpeed: { type: 'number', default: 0.5 } // Зменшено швидкість обертання
+                rotationSpeed: { type: 'number', default: 0.5 }
             },
             init: function () {
                 this.isRotating = false;
@@ -287,7 +307,8 @@
                 this.targetEl.object3D.scale.set(initial, initial, initial);
                 
                 this.el.addEventListener('touchstart', (e) => {
-                    if (isGameRunning) return; // Вимикаємо маніпуляції під час гри
+                    // Дозволяємо жести лише якщо гра не запущена
+                    if (isGameRunning) return;
 
                     e.preventDefault();
                     if (e.touches.length === 1) {
@@ -325,7 +346,6 @@
                         const deltaX = (e.touches[0].pageX - this.startPos.x) * this.data.rotationSpeed;
                         const deltaY = (e.touches[0].pageY - this.startPos.y) * this.data.rotationSpeed;
                         
-                        // Обертання
                         this.targetEl.object3D.rotation.y += THREE.MathUtils.degToRad(deltaX);
                         this.targetEl.object3D.rotation.x += THREE.MathUtils.degToRad(deltaY);
                         
@@ -342,7 +362,7 @@
         });
         
         // =========================================================
-        // === 2. ОСНОВНА ЛОГІКА ПРОЄКТУ (ЗАЛИШЕНО ФУНКЦІОНАЛ) ===
+        // === 2. ОСНОВНА ЛОГІКА ПРОЄКТУ ===
         // =========================================================
         
         // === Взаємодія з зубчиком (клік) ===
@@ -352,55 +372,66 @@
                     toothClickSound.currentTime = 0;
                     toothClickSound.play().catch(e => console.log("🔇 Звук не запустився:", e));
                 }
-                // Анімація пульсації
+                // Отримуємо поточний масштаб для анімації пульсації
+                const currentScale = toothModel.object3D.scale.x;
+                
                 toothModel.setAttribute('animation__pulse', {
                     property: 'scale', 
-                    to: `${toothModel.object3D.scale.x * 1.2} ${toothModel.object3D.scale.y * 1.2} ${toothModel.object3D.scale.z * 1.2}`, 
+                    to: `${currentScale * 1.2} ${currentScale * 1.2} ${currentScale * 1.2}`, 
                     dur: 200, dir: 'alternate', loop: 2
                 });
                 
-                endMessage.textContent = "🦷 Привіт! Я — зубчик! Почни гру, щоб врятувати мене!";
+                endMessage.textContent = "🦷 Привіт! Покрути та помасштабуй мене! Готовий до гри?";
                 endMessage.style.display = 'block';
                 setTimeout(() => { endMessage.style.display = 'none'; }, 3000);
             }
         });
 
-        // === Події маркера: Показати/Сховати UI ===
+        // === Події маркера: Показати/Сховати UI та Музика ===
         function updateUIOnTarget() {
              const isTargetVisible = targetEntity.object3D.visible;
              if (isTargetVisible) {
                 loader.style.display = 'none';
+                
+                // Автозапуск музики (muted)
+                if (bgMusic.paused) {
+                    bgMusic.play().catch(e => console.log("🔇 Музика не запустилася (очікується клік):", e));
+                }
+                
                 if (!isGameRunning) {
+                    // Показуємо кнопки для режиму "гратися з зубчиком"
                     startGame1Btn.style.display = 'block';
                     startGame2Btn.style.display = 'block';
                     rulesBtn.style.display = 'block';
                     soundBtn.style.display = 'block';
                 }
+                // Кутові кнопки завжди видно, коли є маркер
                 youtubeBtn.style.display = 'block';
                 aboutBtn.style.display = 'block';
                 
+                // Інтерфейс під час гри
                 if (isGameRunning) {
                     stopBtn.style.display = 'block';
                     timerText.style.display = 'block';
                     scoreText.style.display = 'block';
                 }
             } else {
-                 if (!isGameRunning) {
-                    startGame1Btn.style.display = 'none';
-                    startGame2Btn.style.display = 'none';
-                    rulesBtn.style.display = 'none';
-                    soundBtn.style.display = 'none';
-                    stopBtn.style.display = 'none';
-                }
-                youtubeBtn.style.display = 'none';
-                aboutBtn.style.display = 'none';
-                timerText.style.display = 'none';
-                scoreText.style.display = 'none';
+                 // Ховаємо всі кнопки, коли маркер втрачено
+                 startGame1Btn.style.display = 'none';
+                 startGame2Btn.style.display = 'none';
+                 rulesBtn.style.display = 'none';
+                 soundBtn.style.display = 'none';
+                 stopBtn.style.display = 'none';
+                 youtubeBtn.style.display = 'none';
+                 aboutBtn.style.display = 'none';
+                 timerText.style.display = 'none';
+                 scoreText.style.display = 'none';
             }
         }
         
         targetEntity.addEventListener('targetFound', updateUIOnTarget);
         targetEntity.addEventListener('targetLost', updateUIOnTarget);
+        // Невеликий інтервал для оновлення, якщо події пропущені
         setInterval(updateUIOnTarget, 500);
 
 
@@ -409,16 +440,20 @@
             bgMusic.muted = !bgMusic.muted;
             applauseSound.muted = !bgMusic.muted;
             toothClickSound.muted = !bgMusic.muted;
+            
             soundBtn.textContent = bgMusic.muted ? "🔊 Увімкнути звук" : "🔇 Вимкнути звук";
-            if (!bgMusic.muted && isGameRunning) {
+            
+            if (!bgMusic.muted) {
+                // Якщо вмикаємо, програємо
                 bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
-            } else if (bgMusic.muted) {
+            } else {
+                // Якщо вимикаємо, пауза
                 bgMusic.pause();
             }
         }
         soundBtn.addEventListener('click', toggleSound);
 
-        // === Пауза через подвійний тап (Залишається як у попередньому коді) ===
+        // === Пауза через подвійний тап та інші функціональні кнопки ===
         function handleDoubleTap(e) {
             if (!isGameRunning || rulesMessage.style.display === 'block') return;
             const now = Date.now();
@@ -427,8 +462,8 @@
                     isPaused = false;
                     stopBtn.textContent = "⏸ Пауза";
                     endMessage.style.display = 'none';
-                    if (!bgMusic.muted) bgMusic.play().catch(e => console.log("🔇 Музика:", e));
-                    if (currentGame === 'game1') requestAnimationFrame(animateGame1);
+                    if (!bgMusic.muted) bgMusic.play();
+                    if (currentGame === 'game1') requestAnimationFrame(animateGame1); // Потрібно реалізувати animateGame1/2
                     else if (currentGame === 'game2') requestAnimationFrame(animateGame2);
                 } else {
                     isPaused = true;
@@ -441,91 +476,23 @@
             lastTap = now;
         }
         document.addEventListener('touchstart', handleDoubleTap, { passive: false });
-        document.addEventListener('click', (e) => {
-             // Виключаємо клік по кнопках
-            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && e.target.closest('#rulesMessage') === null) {
-                handleDoubleTap(e);
-            }
-        });
-
-        // === Функція зупинки/скидання гри ===
-        function stopGame() {
-            isGameRunning = false;
-            isPaused = false;
-            stopBtn.style.display = 'none';
-            
-            document.getElementById('canvasGameContainer').style.display = 'none';
-            document.getElementById('cleaningGameContainer').style.display = 'none';
-            document.querySelector('a-scene').style.display = 'block';
-            
-            timerText.style.display = 'none';
-            scoreText.style.display = 'none';
-            if (endMessage) endMessage.style.display = 'none';
-            
-            bgMusic.pause();
-            
-            startGame1Btn.style.display = 'block';
-            startGame2Btn.style.display = 'block';
-            rulesBtn.style.display = 'block';
-            soundBtn.style.display = 'block';
-        }
-
-        function resetGame() {
-            stopGame();
-            score = 0;
-            emojis = [];
-            startTime = null;
-            scoreText.textContent = `🌟 Балів: 0`;
-            timerText.textContent = `⏳ Час: 60`;
-        }
         
-        // Функція для показу правил перед стартом
-        function showRulesBeforeStart(gameType) {
-            currentGame = gameType;
-            startGame1Btn.style.display = 'none';
-            startGame2Btn.style.display = 'none';
-            rulesBtn.style.display = 'none';
-            soundBtn.style.display = 'none';
-            youtubeBtn.style.display = 'none';
-            aboutBtn.style.display = 'none';
-            document.querySelector('a-scene').style.display = 'none';
-            rulesMessage.style.display = 'block';
-        }
-
-        // === КНОПКИ СТАРТУ ГРИ ===
-        startGame1Btn.addEventListener('click', () => showRulesBeforeStart('game1'));
-        startGame2Btn.addEventListener('click', () => showRulesBeforeStart('game2'));
-
-        closeRulesBtn.addEventListener('click', () => {
-            rulesMessage.style.display = 'none';
-            if (currentGame === 'game1') startCanvasGame(60);
-            else if (currentGame === 'game2') startCanvasGame(0);
-        });
-
-        stopBtn.addEventListener('click', () => {
-            if (isPaused) {
-                handleDoubleTap({ timeStamp: Date.now() + 300 });
-            } else {
-                isPaused = true;
-                stopBtn.textContent = "▶️ Продовжити";
-                bgMusic.pause();
-                endMessage.textContent = "⏸ Пауза";
-                endMessage.style.display = 'block';
-                setTimeout(() => endMessage.style.display = 'none', 2000);
-            }
-        });
-        
-        rulesBtn.addEventListener('click', () => { rulesMessage.style.display = 'block'; });
-
-        // === Функції Canvas-Ігор (заглушки) ===
-        // УВАГА: Для повної функціональності тут мають бути всі деталі Game1 і Game2
-        // Я залишаю тут спрощену логіку для демонстрації, як працює перемикання
+        // ... (Функції startCanvasGame, initCanvasGame, initCleaningGame та інші заглушки залишаються без змін) ...
 
         function startCanvasGame(initialTime) {
             isGameRunning = true;
             isPaused = false;
             stopBtn.textContent = "⏸ Пауза";
             stopBtn.style.display = 'block';
+            
+            // Ховаємо всі кнопки старту/інфо, залишаємо лише Паузу/Стоп
+            startGame1Btn.style.display = 'none';
+            startGame2Btn.style.display = 'none';
+            rulesBtn.style.display = 'none';
+            soundBtn.style.display = 'none';
+            youtubeBtn.style.display = 'none';
+            aboutBtn.style.display = 'none';
+            document.querySelector('a-scene').style.display = 'none'; // Ховаємо AR-сцену для гри на Canvas
             
             if (initialTime > 0) {
                  document.getElementById('canvasGameContainer').style.display = 'block';
@@ -537,11 +504,10 @@
         }
         
         function initCanvasGame(duration) {
-             const canvas = document.getElementById('gameCanvas');
-             // Тут має бути повна логіка initCanvasGame з попередньої відповіді...
+             // ... логіка ініціалізації Game 1
              
              startTime = Date.now();
-             score = 0; // Скидаємо рахунок для чистого старту Game 1
+             score = 0; 
              timerText.textContent = `⏳ Час: ${duration}`;
              scoreText.textContent = `🌟 Балів: 0`;
              timerText.style.display = 'block';
@@ -553,28 +519,64 @@
                  initCleaningGame();
              }
              
-             // Імітація таймера завершення
              if (duration > 0) setTimeout(endCanvasGame, duration * 1000); 
-             
              document.getElementById('endBtn').onclick = endCanvasGame;
-             // В цьому місці має бути requestAnimationFrame(animateGame1)
         }
 
         function initCleaningGame() {
             currentGame = 'game2';
-            const canvas = document.getElementById('cleaningCanvas');
-            // Тут має бути повна логіка initCleaningGame з попередньої відповіді...
+            // ... логіка ініціалізації Game 2
             
-            // Скидаємо таймер і додаємо початкові бали Game 1, якщо була Game 1
-            if (currentGame === 'game2') timerText.textContent = `⏳ Час: 20`; 
+            timerText.textContent = `⏳ Час: 20`; 
             
             document.getElementById('cleaningEndBtn').onclick = () => {
                 endMessage.textContent = `🎉 Гра завершена! Загальний рахунок: ${score} балів!`;
                 endMessage.style.display = 'block';
                 setTimeout(() => { endMessage.style.display = 'none'; stopGame(); }, 5000);
             };
-            // В цьому місці має бути requestAnimationFrame(animateGame2)
         }
+
+        function stopGame() {
+            isGameRunning = false;
+            isPaused = false;
+            stopBtn.style.display = 'none';
+            
+            document.getElementById('canvasGameContainer').style.display = 'none';
+            document.getElementById('cleaningGameContainer').style.display = 'none';
+            document.querySelector('a-scene').style.display = 'block'; // Повертаємо AR-сцену
+            
+            timerText.style.display = 'none';
+            scoreText.style.display = 'none';
+            if (endMessage) endMessage.style.display = 'none';
+            
+            bgMusic.pause();
+            
+            // Показуємо кнопки для режиму "гратися з зубчиком"
+            if (targetEntity.object3D.visible) {
+                 startGame1Btn.style.display = 'block';
+                 startGame2Btn.style.display = 'block';
+                 rulesBtn.style.display = 'block';
+                 soundBtn.style.display = 'block';
+                 youtubeBtn.style.display = 'block';
+                 aboutBtn.style.display = 'block';
+            }
+        }
+
+        
+        // Керування кнопками
+        startGame1Btn.addEventListener('click', () => showRulesBeforeStart('game1'));
+        startGame2Btn.addEventListener('click', () => showRulesBeforeStart('game2'));
+        closeRulesBtn.addEventListener('click', () => {
+            rulesMessage.style.display = 'none';
+            if (currentGame === 'game1') startCanvasGame(60);
+            else if (currentGame === 'game2') startCanvasGame(0);
+        });
+        stopBtn.addEventListener('click', () => {
+            if (isPaused) { handleDoubleTap({ timeStamp: Date.now() + 300 }); } 
+            else { isPaused = true; stopBtn.textContent = "▶️ Продовжити"; bgMusic.pause(); endMessage.textContent = "⏸ Пауза"; endMessage.style.display = 'block'; setTimeout(() => endMessage.style.display = 'none', 2000); }
+        });
+        rulesBtn.addEventListener('click', () => { rulesMessage.style.display = 'block'; });
+        // Кінець JS
     </script>
 </body>
 </html>
