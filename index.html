@@ -94,6 +94,7 @@
         }
         #youtubeBtn { left: clamp(15px, 3vw, 20px); background: linear-gradient(45deg, #ff4757, #ff6348); color: white; }
         #aboutBtn { right: clamp(15px, 3vw, 20px); background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; }
+        #resetRotationBtn { top: clamp(15px, 3vh, 20px); left: clamp(15px, 3vw, 20px); background: linear-gradient(45deg, #9B59B6, #8E44AD); color: white; }
         .ui-info-text {
             position: fixed;
             left: clamp(8px, 2vw, 10px);
@@ -261,8 +262,14 @@
     <button id="stopBtn" class="ui-btn" style="display: none;">❌ Стоп</button>
     <a href="https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi" id="youtubeBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">❤️ Автор</a>
     <a href="https://nikadent-family.com.ua/ua/" id="aboutBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">ℹ️ Про нас</a>
+    <button id="resetRotationBtn" class="ui-btn">🔄 Скинути</button>
 
     <script>
+        // Допоміжна функція clamp
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+
         // === 0. ІНІЦІАЛІЗАЦІЯ ЗМІННИХ ТА АДАПТАЦІЯ AR ===
         function fixHeight() { document.body.style.height = window.innerHeight + 'px'; }
         fixHeight();
@@ -295,6 +302,7 @@
         const toothClickSound = document.querySelector('#toothClickSound');
         const goodSound = document.querySelector('#goodSound');
         const missSound = document.querySelector('#missSound');
+        const resetRotationBtn = document.getElementById('resetRotationBtn');
 
         let isGameRunning = false;
         let isPaused = false;
@@ -378,8 +386,10 @@
                 } else if (this.isRotating && e.touches.length === 1) {
                     const deltaX = (e.touches[0].pageX - this.startPos.x) * this.data.rotationSpeed;
                     const deltaY = (e.touches[0].pageY - this.startPos.y) * this.data.rotationSpeed;
+                    const deltaZ = (e.touches[0].pageX - this.startPos.x) * this.data.rotationSpeed * 0.5; // Додано обертання по Z
                     this.targetEl.object3D.rotation.y += AFRAME.utils.degToRad(deltaX);
                     this.targetEl.object3D.rotation.x += AFRAME.utils.degToRad(deltaY);
+                    this.targetEl.object3D.rotation.z += AFRAME.utils.degToRad(deltaZ); // Додано обертання по Z
                     this.startPos.x = e.touches[0].pageX;
                     this.startPos.y = e.touches[0].pageY;
                 }
@@ -441,6 +451,7 @@
             soundBtn.style.display = showMenu ? 'block' : 'none';
             youtubeBtn.style.display = isTargetVisible ? 'block' : 'none';
             aboutBtn.style.display = isTargetVisible ? 'block' : 'none';
+            resetRotationBtn.style.display = isTargetVisible && !isGameRunning ? 'block' : 'none';
             if (isGameRunning) {
                 stopBtn.style.display = 'block';
                 timerText.style.display = 'block';
@@ -467,6 +478,16 @@
         }
         soundBtn.addEventListener('click', toggleSound);
 
+        // Скидання обертання
+        resetRotationBtn.addEventListener('click', () => {
+            if (!isGameRunning) {
+                toothModel.object3D.rotation.set(0, 0, 0);
+                endMessage.textContent = "🦷 Обертання скинуто! 😊";
+                endMessage.style.display = 'block';
+                setTimeout(() => { endMessage.style.display = 'none'; }, 2000);
+            }
+        });
+
         // === 5. ЛОГІКА ГРИ ===
         function startCanvasGame(duration) {
             isGameRunning = true;
@@ -481,6 +502,7 @@
             soundBtn.style.display = 'none';
             youtubeBtn.style.display = 'none';
             aboutBtn.style.display = 'none';
+            resetRotationBtn.style.display = 'none';
             timerText.style.display = 'block';
             scoreText.style.display = 'block';
             listenMessage.style.display = 'none';
