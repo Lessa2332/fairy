@@ -337,8 +337,7 @@
 
         // СТАНИ ГРИ
         let isGameRunning = false;
-        let gameSelectionActive = false; // Стан: меню вибору гри активне
-        let isPaused = false;
+        let gameSelectionActive = false;
         let isCleaningActive = false;
         let isTargetVisible = false;
         let wasBgMusicPlaying = false; 
@@ -367,7 +366,8 @@
         // === 1. ВЗАЄМОДІЯ З МОДЕЛЛЮ ===
         
         toothModel.addEventListener('click', () => {
-            if (!isGameRunning && rulesMessage.style.display !== 'block' && listenMessage.style.display !== 'block') {
+            // Модель реагує лише коли неактивні ігри чи оверлеї
+            if (!isGameRunning && !gameSelectionActive && rulesMessage.style.display !== 'block' && listenMessage.style.display !== 'block') {
                 if (!toothClickSound.muted) {
                     toothClickSound.currentTime = 0;
                     toothClickSound.play().catch(e => console.log("🔇 Звук не запустився:", e));
@@ -390,10 +390,9 @@
             if (!isGameRunning) {
                 toothModel.object3D.rotation.set(0, 0, 0);
                 const gestures = AScene.components['touch-gestures'];
-                if (gestures) {
-                    const initialScale = gestures.data.initialScale;
-                    toothModel.object3D.scale.set(initialScale, initialScale, initialScale);
-                }
+                const initialScale = gestures ? gestures.data.initialScale : 0.3;
+                toothModel.object3D.scale.set(initialScale, initialScale, initialScale);
+                
                 endMessage.textContent = "🦷 Модель скинута! 😊";
                 endMessage.style.display = 'block';
                 setTimeout(() => { endMessage.style.display = 'none'; }, 2000);
@@ -404,7 +403,7 @@
 
         function pauseSceneAndHideModel() {
             AScene.pause();
-            AScene.style.display = 'none';
+            AScene.style.display = 'none'; // Приховуємо камеру, коли канвас активний
             toothModel.object3D.visible = false;
         }
 
@@ -439,7 +438,7 @@
                 listenMessage.style.display = 'none';
                 resetRotationBtn.style.display = 'none';
             } else if (gameSelectionActive) {
-                // Стан: Меню вибору гри
+                // Стан: Меню вибору гри (Зубчик активний для обертання/масштабування)
                 mainPlayBtn.style.display = 'none';
                 startGame1Btn.style.display = isTargetVisible && !isMenuShown ? 'block' : 'none';
                 startGame2Btn.style.display = isTargetVisible && !isMenuShown ? 'block' : 'none';
@@ -447,7 +446,7 @@
                 listenMessage.style.display = 'none';
                 resetRotationBtn.style.display = isTargetVisible && !isMenuShown ? 'block' : 'none';
             } else if (isTargetVisible) {
-                // Стан: Початковий
+                // Стан: Початковий (потрібно прослухати або натиснути 'Грати')
                 const messagePlayed = listenMessage.style.display === 'none';
 
                 listenMessage.style.display = messagePlayed ? 'none' : 'block';
@@ -492,7 +491,7 @@
             updateUIOnTarget();
         });
 
-        updateUIOnTarget(); // Запуск
+        updateUIOnTarget(); 
 
         // === 3. КЕРУВАННЯ ЗВУКОМ та ФЛОУ ===
 
@@ -566,8 +565,8 @@
         // === 4. КЕРУВАННЯ ГРОЮ (ЗАПУСК/ЗУПИНКА) ===
         
         function returnToTooth() {
-            stopGame(false); // Не було "нормального" закінчення
-            showGameSelectionMenu(); // Одразу відкриваємо меню вибору
+            stopGame(false); 
+            showGameSelectionMenu(); 
         }
         returnBtn.addEventListener('click', returnToTooth);
 
@@ -580,7 +579,7 @@
             cleanedPatchesCount = 0;
             scoreText.textContent = `🌟 Бали: 0`;
             updateUIOnTarget();
-            pauseSceneAndHideModel();
+            pauseSceneAndHideModel(); // Сцена повністю приховується, щоб канвас працював коректно
             
             wasBgMusicPlaying = !bgMusic.muted && !bgMusic.paused;
             if (!bgMusic.paused) bgMusic.pause();
@@ -608,7 +607,7 @@
             cancelAnimationFrame(animationFrameId);
             clearTimeout(gameTimerId);
 
-            // Видалення обробників подій для обох ігор
+            // Агресивне видалення всіх ігрових елементів
             gameCanvas.removeEventListener('click', handleItemClick);
             gameCanvas.removeEventListener('touchstart', handleItemClick);
             endBtn.removeEventListener('click', endGame1);
@@ -686,7 +685,6 @@
         }
 
         function handleItemClick(e) {
-            if (isPaused) return;
             e.preventDefault();
 
             const rect = gameCanvas.getBoundingClientRect();
@@ -713,7 +711,7 @@
         }
 
         function updateGame1() {
-            if (!isGameRunning || isPaused) return;
+            if (!isGameRunning) return;
 
             const now = Date.now();
             const elapsedSeconds = Math.floor((now - startTime) / 1000);
@@ -773,7 +771,6 @@
             cancelAnimationFrame(animationFrameId);
             clearTimeout(gameTimerId);
             
-            // Видаляємо обробники подій
             gameCanvas.removeEventListener('click', handleItemClick);
             gameCanvas.removeEventListener('touchstart', handleItemClick);
             endBtn.removeEventListener('click', endGame1);
@@ -781,14 +778,15 @@
             canvasContainer1.style.display = 'none';
             endBtn.style.display = 'none';
 
-            endMessage.textContent = `🎉 Клас! Бали: ${score}! Пора чистити зубчик! 🧼`;
+            endMessage.textContent = `🎉 Клас! Бали: ${score}! Хочеш почистити зубчик? 🧼`;
             endMessage.style.display = 'block';
 
             if (!applauseSound.muted) { applauseSound.currentTime = 0; applauseSound.play().catch(e => console.log("🔇 Звук не запустився:", e)); }
 
+            // *** ВИПРАВЛЕНО: Повернення до меню вибору, а не примусовий запуск Гри 2 ***
             setTimeout(() => {
                 endMessage.style.display = 'none';
-                startCanvasGame('game2');
+                stopGame(true); 
             }, 3000);
         }
 
@@ -894,15 +892,13 @@
             score = 0;
             scoreText.textContent = `🌟 Бали: 0`;
             brushElement.style.display = 'block';
-            isCleaningActive = false; // Початковий стан
+            isCleaningActive = false;
 
-            // Створення плям бруду навколо центрального зубчика
             const centerX = cleaningCanvas.width / 2;
             const centerY = cleaningCanvas.height / 2;
             const toothRadius = Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.35;
 
             for (let i = 0; i < 7; i++) {
-                // Випадковий кут та відстань від центру (щоб плями були на зубчику)
                 const angle = Math.random() * 2 * Math.PI;
                 const distance = toothRadius * (0.3 + Math.random() * 0.6); 
 
@@ -933,7 +929,6 @@
             cancelAnimationFrame(animationFrameId);
             clearTimeout(gameTimerId);
             
-            // Видаляємо обробники подій
             cleaningCanvas.removeEventListener('mousedown', startClean);
             cleaningCanvas.removeEventListener('mouseup', endClean);
             cleaningCanvas.removeEventListener('mousemove', cleanPatch);
@@ -957,7 +952,7 @@
 
             setTimeout(() => {
                 endMessage.style.display = 'none';
-                stopGame(true); // Нормальне закінчення, повертає до меню вибору
+                stopGame(true);
             }, 4000);
         }
     </script>
