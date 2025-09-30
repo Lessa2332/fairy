@@ -238,7 +238,8 @@
             <audio id="bg-music" src="assets/audio/sound4.mp3" preload="auto" loop muted playsinline crossorigin="anonymous"></audio>
             <audio id="applauseSound" src="assets/audio/applause.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
             <audio id="toothClickSound" src="assets/audio/sound5.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
-            </a-assets>
+            <audio id="toothMessageSound" src="assets/audio/sound1.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
+        </a-assets>
         <a-camera look-controls="enabled: false" position="0 0 0">
             <a-cursor
                 raycaster="objects: .clickable;"
@@ -307,7 +308,8 @@
         const bgMusic = document.querySelector('#bg-music');
         const applauseSound = document.querySelector('#applauseSound');
         const toothClickSound = document.querySelector('#toothClickSound');
-        // goodSound та missSound ВИДАЛЕНО
+        // ДОДАНО: Аудіо повідомлення від Зубчика (sound1.mp3)
+        const toothMessageSound = document.querySelector('#toothMessageSound'); 
         const resetRotationBtn = document.getElementById('resetRotationBtn');
 
         let isGameRunning = false;
@@ -322,21 +324,21 @@
         let dirtPatches = [];
         let startTime = null;
         let lastSpawnTime = 0;
-        let isCleaningActive = false; // Для гри 2
-        let cleanedPatchesCount = 0; // Для гри 2
+        let isCleaningActive = false;
+        let cleanedPatchesCount = 0;
 
         const GAME1_DURATION = 45;
-        const CLEANING_DURATION = 30; // Збільшив тривалість чищення для зручності
-        const ITEM_SIZE = 60; // Збільшив розмір для мобільних торкань
+        const CLEANING_DURATION = 30;
+        const ITEM_SIZE = 60;
         const FALL_SPEED_MULTIPLIER = 2.5;
-        const BRUSH_SIZE = 80; // Відповідає CSS
+        const BRUSH_SIZE = 80;
 
-        // Початкове налаштування звуку
-        [bgMusic, applauseSound, toothClickSound].forEach(a => a.muted = true);
+        // Початкове налаштування звуку: всі вимкнені
+        [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = true);
         soundBtn.textContent = "🔊 Звук";
 
         // === 1. КЕРУВАННЯ ЖЕСТАМИ ДЛЯ AR-МОДЕЛІ (A-FRAME COMPONENT) ===
-        // Компонент touch-gestures вже додано до <a-scene>
+        // ... (компонент touch-gestures вже на a-scene)
 
         // === 2. ВЗАЄМОДІЯ З МОДЕЛЛЮ ===
         toothModel.addEventListener('click', () => {
@@ -401,7 +403,6 @@
             rulesBtn.style.display = showMenu ? 'block' : 'none';
             soundBtn.style.display = showMenu ? 'block' : 'none';
 
-            // Завжди показуємо посилання на автора/про нас, якщо AR-сцена активна (маркер видно або гра не запущена)
             youtubeBtn.style.display = isTargetVisible ? 'block' : 'none';
             aboutBtn.style.display = isTargetVisible ? 'block' : 'none';
 
@@ -411,17 +412,22 @@
                 stopBtn.style.display = 'block';
                 timerText.style.display = 'block';
                 scoreText.style.display = 'block';
+                listenMessage.style.display = 'none'; // Ховаємо повідомлення під час гри
             } else {
                 stopBtn.style.display = 'none';
                 timerText.style.display = 'none';
                 scoreText.style.display = 'none';
-                if (isTargetVisible) listenMessage.style.display = 'block';
+                // Показуємо повідомлення, якщо маркер видно і немає інших оверлеїв
+                if (isTargetVisible && rulesMessage.style.display !== 'block') {
+                     listenMessage.style.display = 'block';
+                } else {
+                     listenMessage.style.display = 'none';
+                }
             }
 
             // Показуємо лоадер, якщо маркер не знайдено і гра не запущена
-            if (!isTargetVisible && !isGameRunning && rulesMessage.style.display !== 'block') {
+            if (!isTargetVisible && !isGameRunning && rulesMessage.style.display !== 'block' && listenMessage.style.display !== 'block') {
                 loader.style.display = 'flex';
-                listenMessage.style.display = 'none';
             } else {
                 loader.style.display = 'none';
             }
@@ -448,8 +454,8 @@
         // === 4. КЕРУВАННЯ ЗВУКОМ та ПРАВИЛАМИ ===
         function toggleSound() {
             const isMuted = !bgMusic.muted;
-            // Оновлено: використовуємо лише наявні аудіо
-            [bgMusic, applauseSound, toothClickSound].forEach(a => a.muted = isMuted);
+            // ВИПРАВЛЕНО: Додано toothMessageSound до списку аудіо
+            [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = isMuted);
             soundBtn.textContent = isMuted ? "🔊 Звук" : "🔇 Без звуку";
             if (!isMuted && isTargetVisible && !isGameRunning) {
                 bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
@@ -472,11 +478,37 @@
             updateUIOnTarget();
         });
 
+        // ВИПРАВЛЕНО: ОБРОБНИК ДЛЯ ПОВІДОМЛЕННЯ ВІД ЗУБЧИКА (sound1.mp3)
         listenBtn.addEventListener('click', () => {
-            listenMessage.style.display = 'none';
-            if (!bgMusic.muted) {
-                bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
+            listenMessage.style.display = 'none'; 
+
+            // 1. Примусово вмикаємо всі звуки, якщо вони були заглушені
+            if (bgMusic.muted) {
+                [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = false); 
+                soundBtn.textContent = "🔇 Без звуку";
             }
+
+            // 2. Програємо повідомлення від Зубчика
+            if (toothMessageSound) {
+                bgMusic.pause(); // Призупиняємо фонову музику
+                toothMessageSound.currentTime = 0;
+                toothMessageSound.play().then(() => {
+                    // Відновлюємо фонову музику після закінчення повідомлення
+                    if (!bgMusic.muted) {
+                         bgMusic.play().catch(e => console.log("Музика не відновилася:", e));
+                    }
+                }).catch(e => {
+                    console.error("Повідомлення від Зубчика (sound1.mp3) не запустилося:", e);
+                });
+            }
+
+            // Прибираємо повідомлення через час, що дорівнює довжині повідомлення (або 3.5 секунди)
+            const messageDuration = toothMessageSound && toothMessageSound.duration ? toothMessageSound.duration * 1000 + 500 : 3500;
+            setTimeout(() => {
+                // Ховаємо лише повідомлення, потім оновлюємо UI
+                listenMessage.style.display = 'none';
+                updateUIOnTarget(); 
+            }, messageDuration); 
         });
 
         // === 5. КЕРУВАННЯ ГРОЮ (ЗАПУСК/ЗУПИНКА) ===
@@ -553,10 +585,10 @@
             }
         }
         function playNegativeSound() {
-            // Можна використати інший звук, якщо він є, або просто проігнорувати
+            // Використовуємо звук оплесків як нейтральний/негативний сигнал, якщо іншого немає
             if (!applauseSound.muted) {
-                applauseSound.currentTime = 0;
-                // applauseSound.play().catch(e => console.log("🔇 Негативний звук не запустився:", e));
+                 // applauseSound.currentTime = 0; // Не скидаємо, щоб уникнути конфлікту з оплесками на фіналі
+                 // applauseSound.play().catch(e => console.log("🔇 Негативний звук не запустився:", e));
             }
         }
 
@@ -695,6 +727,7 @@
             endBtn.removeEventListener('click', endGame1);
 
             canvasContainer1.style.display = 'none';
+            endBtn.style.display = 'none'; // Ховаємо кнопку "Чисти зубчик!"
 
             endMessage.textContent = `🎉 Клас! Бали: ${score}! Пора чистити зубчик! 🧼`;
             endMessage.style.display = 'block';
@@ -866,6 +899,7 @@
 
             canvasContainer2.style.display = 'none';
             brushElement.style.display = 'none';
+            cleaningEndBtn.style.display = 'none';
 
             let finalMessage = `🎉 Чудово! Ти почистив ${cleanedPatchesCount} плям! Бали: ${score}!`;
             if (cleanedPatchesCount === dirtPatches.length) {
@@ -884,3 +918,4 @@
     </script>
 </body>
 </html>
+
