@@ -337,7 +337,7 @@
 
         // СТАНИ ГРИ
         let isGameRunning = false;
-        let gameSelectionActive = false;
+        let gameSelectionActive = false; // true = Показано кнопки Гра 1, Гра 2, Правила
         let isCleaningActive = false;
         let isTargetVisible = false;
         let wasBgMusicPlaying = false; 
@@ -363,7 +363,7 @@
         [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = true);
         soundBtn.textContent = "🔊 Звук"; 
         
-        // === КОМПОНЕНТ ДЛЯ ОБРОБКИ СЕНСОРНИХ ЖЕСТІВ (ВЗЯТО З ПИСАНКИ ТА АДАПТОВАНО) ===
+        // === КОМПОНЕНТ ДЛЯ ОБРОБКИ СЕНСОРНИХ ЖЕСТІВ ===
 
         AFRAME.registerComponent('touch-gestures', {
             schema: {
@@ -371,13 +371,13 @@
                 initialScale: { type: 'number', default: 0.3 }, 
                 minScale: { type: 'number', default: 0.15 },
                 maxScale: { type: 'number', default: 1.0 },
-                rotationSpeed: { type: 'number', default: 0.5 } // Зменшена швидкість для зручності
+                rotationSpeed: { type: 'number', default: 0.5 }
             },
             init: function () {
                 this.isRotating = false;
                 this.isPinching = false;
                 this.startPos = { x: 0, y: 0 };
-                this.currentScale = this.data.initialScale; // Використовуємо початковий масштаб зі схеми
+                this.currentScale = this.data.initialScale;
                 this.targetEl = document.querySelector('#' + this.data.targetId);
 
                 if (!this.targetEl) {
@@ -385,11 +385,9 @@
                     return;
                 }
                 
-                // Встановлення початкового масштабу
                 const scale = this.data.initialScale;
                 this.targetEl.object3D.scale.set(scale, scale, scale);
                 
-                // Використовуємо window або body для прослуховування, щоб захопити жести по всьому екрану AR
                 const targetArea = this.el.sceneEl; 
 
                 targetArea.addEventListener('touchstart', (e) => {
@@ -432,13 +430,10 @@
                         
                         this.targetEl.object3D.scale.set(newScale, newScale, newScale);
                     } else if (this.isRotating && e.touches.length === 1) {
-                        // Використовуємо THREE.MathUtils для перетворення градусів у радіани
                         const deltaX = (e.touches[0].pageX - this.startPos.x) * this.data.rotationSpeed;
                         const deltaY = (e.touches[0].pageY - this.startPos.y) * this.data.rotationSpeed;
                         
-                        // Обертаємо по осі Y (горизонтальне обертання)
                         this.targetEl.object3D.rotation.y += THREE.MathUtils.degToRad(deltaX);
-                        // Обертаємо по осі X (вертикальне обертання, обмежимо, щоб не перевернути)
                         this.targetEl.object3D.rotation.x += THREE.MathUtils.degToRad(deltaY);
 
                         this.startPos.x = e.touches[0].pageX;
@@ -481,7 +476,6 @@
                 // Скидаємо обертання і масштаб
                 toothModel.object3D.rotation.set(0, 0, 0);
                 
-                // Витягуємо початковий масштаб із компонента (якщо він є)
                 const gestures = AScene.components['touch-gestures'];
                 const initialScale = gestures ? gestures.data.initialScale : 0.3;
                 toothModel.object3D.scale.set(initialScale, initialScale, initialScale);
@@ -511,60 +505,44 @@
         function updateUIOnTarget() {
             const isMenuShown = rulesMessage.style.display === 'block';
 
-            // 1. Постійні кнопки (Автор, Про нас, Звук)
-            youtubeBtn.style.display = isTargetVisible && !isGameRunning ? 'block' : 'none';
-            aboutBtn.style.display = isTargetVisible && !isGameRunning ? 'block' : 'none';
-            soundBtn.style.display = isTargetVisible && !isGameRunning ? 'block' : 'none';
+            // 1. Приховати все за замовчуванням
+            [youtubeBtn, aboutBtn, soundBtn, timerText, scoreText, returnBtn, mainPlayBtn, startGame1Btn, startGame2Btn, rulesBtn, resetRotationBtn, listenMessage].forEach(btn => btn.style.display = 'none');
+            loader.style.display = 'none';
             
-            // 2. Ігрова UI
-            timerText.style.display = isGameRunning ? 'block' : 'none';
-            scoreText.style.display = isGameRunning ? 'block' : 'none';
-            returnBtn.style.display = isGameRunning ? 'block' : 'none';
-
-            // 3. Логіка станів
             if (isGameRunning) {
                 // Стан: У грі (Canvas)
-                mainPlayBtn.style.display = 'none';
-                startGame1Btn.style.display = 'none';
-                startGame2Btn.style.display = 'none';
-                rulesBtn.style.display = 'none';
-                listenMessage.style.display = 'none';
-                resetRotationBtn.style.display = 'none';
-            } else if (gameSelectionActive) {
-                // Стан: Меню вибору гри (Зубчик активний для обертання/масштабування)
-                mainPlayBtn.style.display = 'none';
-                startGame1Btn.style.display = isTargetVisible && !isMenuShown ? 'block' : 'none';
-                startGame2Btn.style.display = isTargetVisible && !isMenuShown ? 'block' : 'none';
-                rulesBtn.style.display = isTargetVisible && !isMenuShown ? 'block' : 'none';
-                listenMessage.style.display = 'none';
-                resetRotationBtn.style.display = isTargetVisible && !isMenuShown ? 'block' : 'none';
+                timerText.style.display = 'block';
+                scoreText.style.display = 'block';
+                returnBtn.style.display = 'block';
             } else if (isTargetVisible) {
-                // Стан: Початковий (потрібно прослухати або натиснути 'Грати')
-                const messagePlayed = listenMessage.style.display === 'none';
-
-                listenMessage.style.display = messagePlayed ? 'none' : 'block';
+                // Стан: AR-сцена (Зубчик видимий)
                 
-                mainPlayBtn.style.display = messagePlayed && !isMenuShown ? 'block' : 'none';
-
-                startGame1Btn.style.display = 'none';
-                startGame2Btn.style.display = 'none';
-                rulesBtn.style.display = 'none';
+                // Постійні AR Кнопки
+                youtubeBtn.style.display = 'block';
+                aboutBtn.style.display = 'block';
+                soundBtn.style.display = 'block';
                 resetRotationBtn.style.display = 'block';
-            } else {
-                // Стан: Маркер втрачено
-                mainPlayBtn.style.display = 'none';
-                startGame1Btn.style.display = 'none';
-                startGame2Btn.style.display = 'none';
-                rulesBtn.style.display = 'none';
-                listenMessage.style.display = 'none';
-                resetRotationBtn.style.display = 'none';
-            }
 
-            // Loader logic
-            if (!isTargetVisible && !isGameRunning && !isMenuShown) {
-                loader.style.display = 'flex';
+                if (gameSelectionActive) {
+                    // Стан: Меню вибору гри
+                    startGame1Btn.style.display = !isMenuShown ? 'block' : 'none';
+                    startGame2Btn.style.display = !isMenuShown ? 'block' : 'none';
+                    rulesBtn.style.display = !isMenuShown ? 'block' : 'none';
+                    listenMessage.style.display = 'none';
+                } else {
+                    // Стан: Початковий (Послухати/Грати)
+                    if (!isMenuShown) {
+                        // Якщо listenMessage ще не приховано, показуємо його. Інакше - mainPlayBtn.
+                        if (listenMessage.style.display === 'block') {
+                            mainPlayBtn.style.display = 'none';
+                        } else {
+                            mainPlayBtn.style.display = 'block'; // Якщо вже слухали/пропустили
+                        }
+                    }
+                }
             } else {
-                loader.style.display = 'none';
+                // Стан: Маркер втрачено (Показати лоадер)
+                loader.style.display = 'flex';
             }
         }
 
@@ -610,19 +588,37 @@
 
         closeRulesBtn.addEventListener('click', () => {
             rulesMessage.style.display = 'none';
-            updateUIOnTarget();
+            showGameSelectionMenu(); // Після правил завжди переходимо до меню вибору
         });
         
+        /**
+         * @description Скидає стан до початкового: показати повідомлення "Послухати" або кнопку "ГРАТИ".
+         */
+        function resetToListenState() {
+            isGameRunning = false;
+            gameSelectionActive = false;
+            // Примусово показуємо повідомлення "Послухати", щоб почати флоу з початку
+            listenMessage.style.display = isTargetVisible ? 'block' : 'none';
+            mainPlayBtn.style.display = 'none';
+            updateUIOnTarget();
+        }
+
+        /**
+         * @description Перехід до меню вибору гри (Гра 1, Гра 2, Правила).
+         */
         function showGameSelectionMenu() {
             gameSelectionActive = true;
             endMessage.style.display = 'none';
+            listenMessage.style.display = 'none';
             resumeSceneAndShowModel();
             updateUIOnTarget();
         }
         
+        // Кнопка "ГРАТИ" (для пропуску аудіо)
         mainPlayBtn.addEventListener('click', showGameSelectionMenu);
         
         listenBtn.addEventListener('click', () => {
+            // Приховуємо повідомлення відразу, щоб уникнути подвійних кнопок
             listenMessage.style.display = 'none'; 
 
             if (bgMusic.muted) {
@@ -636,30 +632,24 @@
                 bgMusic.pause(); 
                 toothMessageSound.currentTime = 0;
                 
-                toothMessageSound.play().then(() => {
-                    if (!bgMusic.muted && wasBgMusicPlaying) {
-                         bgMusic.play().catch(e => console.log("Музика не відновилася:", e));
-                    }
-                }).catch(e => {
-                    console.error("Повідомлення від Зубчика (sound1.mp3) не запустилося:", e);
-                    if (!bgMusic.muted && wasBgMusicPlaying) {
-                         bgMusic.play().catch(e => console.log("Музика не відновилася після помилки:", e));
-                    }
-                });
+                toothMessageSound.play().catch(e => console.error("Повідомлення від Зубчика (sound1.mp3) не запустилося:", e));
             }
-
-            const messageDuration = toothMessageSound && toothMessageSound.duration ? toothMessageSound.duration * 1000 + 500 : 3500;
+            
+            // Визначаємо тривалість повідомлення (якщо аудіо не завантажилося, ставимо затримку)
+            const messageDuration = toothMessageSound && toothMessageSound.duration && isFinite(toothMessageSound.duration) ? toothMessageSound.duration * 1000 + 500 : 3500;
+            
+            // Після завершення звуку переходимо до меню вибору гри
             setTimeout(() => {
-                mainPlayBtn.style.display = 'block';
-                updateUIOnTarget(); 
+                showGameSelectionMenu();
             }, messageDuration); 
         });
 
         // === 4. КЕРУВАННЯ ГРОЮ (ЗАПУСК/ЗУПИНКА) ===
         
+        // *** Оновлена логіка повернення: йдемо на початок! ***
         function returnToTooth() {
             stopGame(false); 
-            showGameSelectionMenu(); 
+            resetToListenState(); // Повернення на початок (до повідомлення "Послухати")
         }
         returnBtn.addEventListener('click', returnToTooth);
 
@@ -672,7 +662,7 @@
             cleanedPatchesCount = 0;
             scoreText.textContent = `🌟 Бали: 0`;
             updateUIOnTarget();
-            pauseSceneAndHideModel(); // Сцена повністю приховується, щоб канвас працював коректно
+            pauseSceneAndHideModel(); // Сцена повністю приховується
             
             wasBgMusicPlaying = !bgMusic.muted && !bgMusic.paused;
             if (!bgMusic.paused) bgMusic.pause();
@@ -695,8 +685,7 @@
 
         function stopGame(fromEnd = true) {
             isGameRunning = false;
-            gameSelectionActive = false; 
-
+            
             cancelAnimationFrame(animationFrameId);
             clearTimeout(gameTimerId);
 
@@ -721,16 +710,11 @@
             cleaningEndBtn.style.display = 'none';
 
             resumeSceneAndShowModel();
-
-            if (fromEnd) {
-                showGameSelectionMenu(); 
-            } else {
-                updateUIOnTarget(); 
-            }
             
             if (!bgMusic.muted && wasBgMusicPlaying) {
                  bgMusic.play().catch(e => console.log("Музика не відновилася після гри:", e));
             }
+            // ЗУПИНКА: Логіка повернення тепер відбувається у функціях, що викликають stopGame
         }
         
         // === 5. ГРА 1: ЗДОРОВИЙ ВИБІР (Falling Items) ===
@@ -876,10 +860,11 @@
 
             if (!applauseSound.muted) { applauseSound.currentTime = 0; applauseSound.play().catch(e => console.log("🔇 Звук не запустився:", e)); }
 
-            // *** ВИПРАВЛЕНО: Повернення до меню вибору ***
+            // *** Оновлено: Повернення до початкового стану ***
             setTimeout(() => {
                 endMessage.style.display = 'none';
                 stopGame(true); 
+                resetToListenState(); 
             }, 3000);
         }
 
@@ -1043,9 +1028,11 @@
             endMessage.textContent = finalMessage;
             endMessage.style.display = 'block';
 
+            // *** Оновлено: Повернення до початкового стану ***
             setTimeout(() => {
                 endMessage.style.display = 'none';
                 stopGame(true);
+                resetToListenState();
             }, 4000);
         }
     </script>
