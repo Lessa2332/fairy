@@ -362,6 +362,96 @@
         // Початкове налаштування звуку
         [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = true);
         soundBtn.textContent = "🔊 Звук"; 
+        
+        // === КОМПОНЕНТ ДЛЯ ОБРОБКИ СЕНСОРНИХ ЖЕСТІВ (ВЗЯТО З ПИСАНКИ ТА АДАПТОВАНО) ===
+
+        AFRAME.registerComponent('touch-gestures', {
+            schema: {
+                targetId: { type: 'string', default: 'tooth-model' },
+                initialScale: { type: 'number', default: 0.3 }, 
+                minScale: { type: 'number', default: 0.15 },
+                maxScale: { type: 'number', default: 1.0 },
+                rotationSpeed: { type: 'number', default: 0.5 } // Зменшена швидкість для зручності
+            },
+            init: function () {
+                this.isRotating = false;
+                this.isPinching = false;
+                this.startPos = { x: 0, y: 0 };
+                this.currentScale = this.data.initialScale; // Використовуємо початковий масштаб зі схеми
+                this.targetEl = document.querySelector('#' + this.data.targetId);
+
+                if (!this.targetEl) {
+                    console.error('Цільова 3D модель не знайдена в компоненті touch-gestures');
+                    return;
+                }
+                
+                // Встановлення початкового масштабу
+                const scale = this.data.initialScale;
+                this.targetEl.object3D.scale.set(scale, scale, scale);
+                
+                // Використовуємо window або body для прослуховування, щоб захопити жести по всьому екрану AR
+                const targetArea = this.el.sceneEl; 
+
+                targetArea.addEventListener('touchstart', (e) => {
+                    // Ігноруємо жести, якщо активна гра або меню
+                    if (isGameRunning || gameSelectionActive || rulesMessage.style.display === 'block' || listenMessage.style.display === 'block') {
+                        return;
+                    }
+                    
+                    e.preventDefault();
+                    if (e.touches.length === 1) {
+                        this.isRotating = true;
+                        this.startPos.x = e.touches[0].pageX;
+                        this.startPos.y = e.touches[0].pageY;
+                    } else if (e.touches.length === 2) {
+                        this.isPinching = true;
+                        this.isRotating = false;
+                        this.initialDistance = Math.hypot(
+                            e.touches[0].pageX - e.touches[1].pageX,
+                            e.touches[0].pageY - e.touches[1].pageY
+                        );
+                        this.currentScale = this.targetEl.object3D.scale.x;
+                    }
+                }, { passive: false });
+
+                targetArea.addEventListener('touchmove', (e) => {
+                    if (isGameRunning || gameSelectionActive || rulesMessage.style.display === 'block' || listenMessage.style.display === 'block') {
+                        return;
+                    }
+                    
+                    e.preventDefault();
+                    if (this.isPinching && e.touches.length === 2) {
+                        const currentDistance = Math.hypot(
+                            e.touches[0].pageX - e.touches[1].pageX,
+                            e.touches[0].pageY - e.touches[1].pageY
+                        );
+                        const scaleFactor = currentDistance / this.initialDistance;
+                        let newScale = this.currentScale * scaleFactor;
+
+                        newScale = Math.max(this.data.minScale, Math.min(this.data.maxScale, newScale));
+                        
+                        this.targetEl.object3D.scale.set(newScale, newScale, newScale);
+                    } else if (this.isRotating && e.touches.length === 1) {
+                        // Використовуємо THREE.MathUtils для перетворення градусів у радіани
+                        const deltaX = (e.touches[0].pageX - this.startPos.x) * this.data.rotationSpeed;
+                        const deltaY = (e.touches[0].pageY - this.startPos.y) * this.data.rotationSpeed;
+                        
+                        // Обертаємо по осі Y (горизонтальне обертання)
+                        this.targetEl.object3D.rotation.y += THREE.MathUtils.degToRad(deltaX);
+                        // Обертаємо по осі X (вертикальне обертання, обмежимо, щоб не перевернути)
+                        this.targetEl.object3D.rotation.x += THREE.MathUtils.degToRad(deltaY);
+
+                        this.startPos.x = e.touches[0].pageX;
+                        this.startPos.y = e.touches[0].pageY;
+                    }
+                }, { passive: false });
+
+                targetArea.addEventListener('touchend', () => {
+                    this.isRotating = false;
+                    this.isPinching = false;
+                });
+            }
+        });
 
         // === 1. ВЗАЄМОДІЯ З МОДЕЛЛЮ ===
         
@@ -388,7 +478,10 @@
 
         resetRotationBtn.addEventListener('click', () => {
             if (!isGameRunning) {
+                // Скидаємо обертання і масштаб
                 toothModel.object3D.rotation.set(0, 0, 0);
+                
+                // Витягуємо початковий масштаб із компонента (якщо він є)
                 const gestures = AScene.components['touch-gestures'];
                 const initialScale = gestures ? gestures.data.initialScale : 0.3;
                 toothModel.object3D.scale.set(initialScale, initialScale, initialScale);
@@ -783,7 +876,7 @@
 
             if (!applauseSound.muted) { applauseSound.currentTime = 0; applauseSound.play().catch(e => console.log("🔇 Звук не запустився:", e)); }
 
-            // *** ВИПРАВЛЕНО: Повернення до меню вибору, а не примусовий запуск Гри 2 ***
+            // *** ВИПРАВЛЕНО: Повернення до меню вибору ***
             setTimeout(() => {
                 endMessage.style.display = 'none';
                 stopGame(true); 
