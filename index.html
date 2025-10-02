@@ -272,7 +272,7 @@
                 position="0 0 0.1"
                 rotation="0 0 0"
                 shadow
-                animation-mixer="clip: Idle; loop: repeat; timeScale: 1.0; autoplay: true;"
+                animation-mixer="clip: speedbag; loop: repeat; timeScale: 1.0; autoplay: true;"
             ></a-gltf-model>
         </a-entity>
     </a-scene>
@@ -363,6 +363,51 @@
         [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = true);
         soundBtn.textContent = "🔊 Звук"; 
         
+        // === ФУНКЦІЇ ДЛЯ КЕРУВАННЯ АНІМАЦІЯМИ ===
+        
+        function playAnimation(animationName, loop = true) {
+            try {
+                toothModel.setAttribute('animation-mixer', {
+                    clip: animationName,
+                    loop: loop ? 'repeat' : 'once',
+                    timeScale: 1.0,
+                    crossFadeDuration: 0.3
+                });
+                console.log('🎬 Відтворюється анімація:', animationName);
+            } catch (error) {
+                console.log('❌ Помилка відтворення анімації:', animationName, error);
+            }
+        }
+
+        function stopAnimation() {
+            toothModel.removeAttribute('animation-mixer');
+        }
+
+        // Функція для відлагодження анімацій
+        function debugAnimations() {
+            toothModel.addEventListener('model-loaded', () => {
+                const mesh = toothModel.getObject3D('mesh');
+                if (mesh && mesh.animations) {
+                    console.log('🎭 Доступні анімації:', mesh.animations.map(anim => anim.name));
+                    
+                    // Автоматично спробувати знайти працюючу анімацію
+                    const availableAnimations = mesh.animations.map(anim => anim.name);
+                    const possibleNames = ['speedbag', 'idle', 'Idle', 'Animation', 'ArmatureAction'];
+                    
+                    const foundAnimation = possibleNames.find(name => 
+                        availableAnimations.some(anim => anim.toLowerCase().includes(name.toLowerCase()))
+                    );
+                    
+                    if (foundAnimation) {
+                        console.log('✅ Знайдена анімація для авто-запуску:', foundAnimation);
+                        playAnimation(foundAnimation);
+                    }
+                } else {
+                    console.log('❌ Анімації не знайдені або модель не завантажилась');
+                }
+            });
+        }
+
         // === КОМПОНЕНТ ДЛЯ ОБРОБКИ СЕНСОРНИХ ЖЕСТІВ ===
 
         AFRAME.registerComponent('touch-gestures', {
@@ -457,6 +502,18 @@
                     toothClickSound.currentTime = 0;
                     toothClickSound.play().catch(e => console.log("🔇 Звук не запустився:", e));
                 }
+                
+                // АНІМАЦІЯ ПРИ КЛІКУ - швидше відтворення speedbag
+                const mesh = toothModel.getObject3D('mesh');
+                if (mesh && mesh.animations) {
+                    const speedbagAnim = mesh.animations.find(anim => 
+                        anim.name.toLowerCase().includes('speedbag')
+                    );
+                    if (speedbagAnim) {
+                        playAnimation(speedbagAnim.name);
+                    }
+                }
+                
                 const currentScale = toothModel.object3D.scale.x;
                 toothModel.setAttribute('animation__pulse', {
                     property: 'scale',
@@ -479,6 +536,17 @@
                 const gestures = AScene.components['touch-gestures'];
                 const initialScale = gestures ? gestures.data.initialScale : 0.3;
                 toothModel.object3D.scale.set(initialScale, initialScale, initialScale);
+                
+                // Продовжуємо анімацію speedbag
+                const mesh = toothModel.getObject3D('mesh');
+                if (mesh && mesh.animations) {
+                    const speedbagAnim = mesh.animations.find(anim => 
+                        anim.name.toLowerCase().includes('speedbag')
+                    );
+                    if (speedbagAnim) {
+                        playAnimation(speedbagAnim.name);
+                    }
+                }
                 
                 endMessage.textContent = "🦷 Модель скинута! 😊";
                 endMessage.style.display = 'block';
@@ -550,6 +618,20 @@
             isTargetVisible = true;
             toothModel.object3D.visible = true;
             updateUIOnTarget();
+            
+            // АВТОМАТИЧНИЙ ЗАПУСК АНІМАЦІЇ SPEEDBAG ПРИ ЗНАХОДЖЕННІ МАРКЕРА
+            setTimeout(() => {
+                const mesh = toothModel.getObject3D('mesh');
+                if (mesh && mesh.animations) {
+                    const speedbagAnim = mesh.animations.find(anim => 
+                        anim.name.toLowerCase().includes('speedbag')
+                    );
+                    if (speedbagAnim) {
+                        playAnimation(speedbagAnim.name);
+                    }
+                }
+            }, 500);
+            
             if (!bgMusic.muted && !isGameRunning && wasBgMusicPlaying) {
                  bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
             }
@@ -619,423 +701,4 @@
         
         listenBtn.addEventListener('click', () => {
             // Приховуємо повідомлення відразу, щоб уникнути подвійних кнопок
-            listenMessage.style.display = 'none'; 
-
-            if (bgMusic.muted) {
-                [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = false); 
-                soundBtn.textContent = "🔇 Без звуку";
-            }
-            
-            wasBgMusicPlaying = !bgMusic.muted && !bgMusic.paused;
-
-            if (toothMessageSound) {
-                bgMusic.pause(); 
-                toothMessageSound.currentTime = 0;
-                
-                toothMessageSound.play().catch(e => console.error("Повідомлення від Зубчика (sound1.mp3) не запустилося:", e));
-            }
-            
-            // Визначаємо тривалість повідомлення (якщо аудіо не завантажилося, ставимо затримку)
-            const messageDuration = toothMessageSound && toothMessageSound.duration && isFinite(toothMessageSound.duration) ? toothMessageSound.duration * 1000 + 500 : 3500;
-            
-            // Після завершення звуку переходимо до меню вибору гри
-            setTimeout(() => {
-                showGameSelectionMenu();
-            }, messageDuration); 
-        });
-
-        // === 4. КЕРУВАННЯ ГРОЮ (ЗАПУСК/ЗУПИНКА) ===
-        
-        // *** Оновлена логіка повернення: йдемо на початок! ***
-        function returnToTooth() {
-            stopGame(false); 
-            resetToListenState(); // Повернення на початок (до повідомлення "Послухати")
-        }
-        returnBtn.addEventListener('click', returnToTooth);
-
-        function startCanvasGame(gameType) {
-            if (!isTargetVisible) return;
-
-            isGameRunning = true;
-            gameSelectionActive = false;
-            score = 0;
-            cleanedPatchesCount = 0;
-            scoreText.textContent = `🌟 Бали: 0`;
-            updateUIOnTarget();
-            pauseSceneAndHideModel(); // Сцена повністю приховується
-            
-            wasBgMusicPlaying = !bgMusic.muted && !bgMusic.paused;
-            if (!bgMusic.paused) bgMusic.pause();
-
-            if (gameType === 'game1') {
-                canvasContainer1.style.display = 'block';
-                canvasContainer2.style.display = 'none';
-                endBtn.style.display = 'block';
-                initGame1(GAME1_DURATION);
-            } else if (gameType === 'game2') {
-                canvasContainer1.style.display = 'none';
-                canvasContainer2.style.display = 'block';
-                cleaningEndBtn.style.display = 'block';
-                initGame2();
-            }
-        }
-
-        startGame1Btn.addEventListener('click', () => startCanvasGame('game1'));
-        startGame2Btn.addEventListener('click', () => startCanvasGame('game2'));
-
-        function stopGame(fromEnd = true) {
-            isGameRunning = false;
-            
-            cancelAnimationFrame(animationFrameId);
-            clearTimeout(gameTimerId);
-
-            // Агресивне видалення всіх ігрових елементів
-            gameCanvas.removeEventListener('click', handleItemClick);
-            gameCanvas.removeEventListener('touchstart', handleItemClick);
-            endBtn.removeEventListener('click', endGame1);
-            cleaningCanvas.removeEventListener('mousedown', startClean);
-            cleaningCanvas.removeEventListener('mouseup', endClean);
-            cleaningCanvas.removeEventListener('mousemove', cleanPatch);
-            cleaningCanvas.removeEventListener('touchstart', startClean);
-            cleaningCanvas.removeEventListener('touchend', endClean);
-            cleaningCanvas.removeEventListener('touchmove', cleanPatch);
-            cleaningEndBtn.removeEventListener('click', endGame2);
-
-
-            canvasContainer1.style.display = 'none';
-            canvasContainer2.style.display = 'none';
-            brushElement.style.display = 'none';
-            endMessage.style.display = 'none';
-            endBtn.style.display = 'none';
-            cleaningEndBtn.style.display = 'none';
-
-            resumeSceneAndShowModel();
-            
-            if (!bgMusic.muted && wasBgMusicPlaying) {
-                 bgMusic.play().catch(e => console.log("Музика не відновилася після гри:", e));
-            }
-            // ЗУПИНКА: Логіка повернення тепер відбувається у функціях, що викликають stopGame
-        }
-        
-        // === 5. ГРА 1: ЗДОРОВИЙ ВИБІР (Falling Items) ===
-        const ctx1 = gameCanvas.getContext('2d');
-        
-        function playPositiveSound() {
-            if (!toothClickSound.muted) { toothClickSound.currentTime = 0; toothClickSound.play().catch(e => console.log("🔇 Звук не запустився:", e)); }
-        }
-        function playNegativeSound() {
-             if (!toothClickSound.muted) { toothClickSound.currentTime = 0; toothClickSound.play().catch(e => console.log("🔇 Негативний звук не запустився:", e)); }
-        }
-
-        function spawnItem() {
-            const goodItems = ['🦷', '🪥', '🍎', '🥕', '💧', '🥛', '🥦', '🍌'];
-            const badItems = ['🍔', '🍟', '🍕', '🍦', '🍭', '🍫', '🥤', '🍰'];
-            const isGood = Math.random() > 0.4;
-            const itemValue = isGood ? goodItems[Math.floor(Math.random() * goodItems.length)] : badItems[Math.floor(Math.random() * badItems.length)];
-
-            fallingItems.push({
-                x: Math.random() * (gameCanvas.width - ITEM_SIZE),
-                y: -ITEM_SIZE,
-                vy: 1.5 + Math.random() * FALL_SPEED_MULTIPLIER,
-                value: itemValue,
-                isGood: isGood
-            });
-        }
-
-        function drawItems() {
-            ctx1.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-            ctx1.font = `${ITEM_SIZE}px 'Comic Neue', sans-serif`;
-            ctx1.textAlign = 'center';
-            ctx1.textBaseline = 'middle';
-
-            // Малюємо зубчик внизу
-            ctx1.font = `${ITEM_SIZE * 2}px 'Comic Neue', sans-serif`;
-            ctx1.globalAlpha = 0.3;
-            ctx1.fillText("🦷", gameCanvas.width / 2, gameCanvas.height - 30);
-            ctx1.globalAlpha = 1.0;
-
-            ctx1.font = `${ITEM_SIZE}px 'Comic Neue', sans-serif`;
-
-            fallingItems.forEach(item => {
-                ctx1.fillText(item.value, item.x + ITEM_SIZE / 2, item.y + ITEM_SIZE / 2);
-            });
-        }
-
-        function handleItemClick(e) {
-            e.preventDefault();
-
-            const rect = gameCanvas.getBoundingClientRect();
-            const clickX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-            const clickY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
-
-            for (let i = fallingItems.length - 1; i >= 0; i--) {
-                const item = fallingItems[i];
-                if (clickX >= item.x && clickX <= item.x + ITEM_SIZE &&
-                    clickY >= item.y && clickY <= item.y + ITEM_SIZE) {
-
-                    if (item.isGood) {
-                        score += 10;
-                        playPositiveSound();
-                    } else {
-                        score = Math.max(0, score - 5);
-                        playNegativeSound();
-                    }
-                    scoreText.textContent = `🌟 Бали: ${score}`;
-                    fallingItems.splice(i, 1);
-                    break;
-                }
-            }
-        }
-
-        function updateGame1() {
-            if (!isGameRunning) return;
-
-            const now = Date.now();
-            const elapsedSeconds = Math.floor((now - startTime) / 1000);
-            const timeLeft = GAME1_DURATION - elapsedSeconds;
-            timerText.textContent = `⏳ Час: ${String(timeLeft).padStart(2, '0')}`;
-
-            if (timeLeft <= 0) {
-                endGame1();
-                return;
-            }
-
-            const spawnInterval = 600 - (elapsedSeconds * 10);
-
-            if (now - lastSpawnTime > Math.max(150, spawnInterval)) {
-                spawnItem();
-                lastSpawnTime = now;
-            }
-
-            fallingItems = fallingItems.filter(item => {
-                if (item.y < gameCanvas.height + ITEM_SIZE) {
-                    item.y += item.vy;
-                    return true;
-                }
-                if (item.isGood) {
-                    score = Math.max(0, score - 5);
-                    scoreText.textContent = `🌟 Бали: ${score}`;
-                }
-                return false;
-            });
-
-            drawItems();
-        }
-
-        function animateGame1() {
-            updateGame1();
-            animationFrameId = requestAnimationFrame(animateGame1);
-        }
-
-        function initGame1(duration) {
-            currentGame = 'game1';
-            gameCanvas.width = window.innerWidth;
-            gameCanvas.height = window.innerHeight;
-            fallingItems = [];
-            lastSpawnTime = Date.now();
-            startTime = Date.now();
-            timerText.textContent = `⏳ Час: ${String(duration).padStart(2, '0')}`;
-
-            gameCanvas.addEventListener('click', handleItemClick);
-            gameCanvas.addEventListener('touchstart', handleItemClick, { passive: false });
-            endBtn.addEventListener('click', endGame1);
-
-            gameTimerId = setTimeout(endGame1, duration * 1000);
-            animationFrameId = requestAnimationFrame(animateGame1);
-        }
-
-        function endGame1() {
-            cancelAnimationFrame(animationFrameId);
-            clearTimeout(gameTimerId);
-            
-            gameCanvas.removeEventListener('click', handleItemClick);
-            gameCanvas.removeEventListener('touchstart', handleItemClick);
-            endBtn.removeEventListener('click', endGame1);
-
-            canvasContainer1.style.display = 'none';
-            endBtn.style.display = 'none';
-
-            endMessage.textContent = `🎉 Клас! Бали: ${score}! Хочеш почистити зубчик? 🧼`;
-            endMessage.style.display = 'block';
-
-            if (!applauseSound.muted) { applauseSound.currentTime = 0; applauseSound.play().catch(e => console.log("🔇 Звук не запустився:", e)); }
-
-            // *** Оновлено: Повернення до початкового стану ***
-            setTimeout(() => {
-                endMessage.style.display = 'none';
-                stopGame(true); 
-                resetToListenState(); 
-            }, 3000);
-        }
-
-
-        // === 6. ГРА 2: ЧИСТКА ЗУБІВ (Cleaning) ===
-        const ctx2 = cleaningCanvas.getContext('2d');
-
-        function drawScene2() {
-            ctx2.clearRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
-            ctx2.fillStyle = 'white';
-            ctx2.fillRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
-
-            ctx2.font = `${Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.7}px 'Comic Neue', sans-serif`;
-            ctx2.textAlign = 'center';
-            ctx2.textBaseline = 'middle';
-            ctx2.globalAlpha = 1.0;
-            ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
-
-            dirtPatches.forEach(patch => {
-                if (patch.cleanPercentage < 100) {
-                    ctx2.globalAlpha = 0.8 * (1 - patch.cleanPercentage / 100);
-                    ctx2.fillStyle = 'rgb(100, 50, 20)';
-                    ctx2.beginPath();
-                    ctx2.arc(patch.x, patch.y, patch.radius, 0, 2 * Math.PI);
-                    ctx2.fill();
-                }
-            });
-            ctx2.globalAlpha = 1.0;
-        }
-
-        function startClean(e) {
-            e.preventDefault();
-            isCleaningActive = true;
-        }
-
-        function endClean(e) {
-            isCleaningActive = false;
-        }
-
-        function cleanPatch(e) {
-            if (!isCleaningActive) return;
-            e.preventDefault();
-
-            const rect = cleaningCanvas.getBoundingClientRect();
-            const currentX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-            const currentY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
-
-            brushElement.style.left = `${currentX - BRUSH_SIZE / 2}px`;
-            brushElement.style.top = `${currentY - BRUSH_SIZE / 2}px`;
-
-            let patchesCleaned = false;
-
-            dirtPatches.forEach(patch => {
-                if (patch.cleanPercentage < 100) {
-                    const distance = Math.sqrt(Math.pow(patch.x - currentX, 2) + Math.pow(patch.y - currentY, 2));
-
-                    if (distance < patch.radius + BRUSH_SIZE / 4) {
-                        patch.cleanPercentage += 2;
-                        if (patch.cleanPercentage >= 100) {
-                            patch.cleanPercentage = 100;
-                            cleanedPatchesCount++;
-                            score += 10;
-                            scoreText.textContent = `🌟 Бали: ${score}`;
-                            patchesCleaned = true;
-                            playPositiveSound();
-                        }
-                    }
-                }
-            });
-
-            if (patchesCleaned) {
-                drawScene2();
-            }
-
-            if (cleanedPatchesCount === dirtPatches.length) {
-                endGame2();
-            }
-        }
-
-        function animateGame2() {
-            if (!isGameRunning || currentGame !== 'game2') return;
-
-            const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-            const timeLeft = CLEANING_DURATION - elapsedSeconds;
-            timerText.textContent = `⏳ Час: ${String(timeLeft).padStart(2, '0')}`;
-
-            if (timeLeft <= 0) {
-                endGame2();
-                return;
-            }
-
-            drawScene2();
-
-            animationFrameId = requestAnimationFrame(animateGame2);
-        }
-
-        function initGame2() {
-            currentGame = 'game2';
-            cleaningCanvas.width = window.innerWidth;
-            cleaningCanvas.height = window.innerHeight;
-            dirtPatches = [];
-            cleanedPatchesCount = 0;
-            score = 0;
-            scoreText.textContent = `🌟 Бали: 0`;
-            brushElement.style.display = 'block';
-            isCleaningActive = false;
-
-            const centerX = cleaningCanvas.width / 2;
-            const centerY = cleaningCanvas.height / 2;
-            const toothRadius = Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.35;
-
-            for (let i = 0; i < 7; i++) {
-                const angle = Math.random() * 2 * Math.PI;
-                const distance = toothRadius * (0.3 + Math.random() * 0.6); 
-
-                dirtPatches.push({
-                    x: centerX + distance * Math.cos(angle),
-                    y: centerY + distance * Math.sin(angle),
-                    radius: Math.random() * 20 + 30,
-                    cleanPercentage: 0
-                });
-            }
-
-            drawScene2();
-            cleaningCanvas.addEventListener('mousedown', startClean);
-            cleaningCanvas.addEventListener('mouseup', endClean);
-            cleaningCanvas.addEventListener('mousemove', cleanPatch);
-            cleaningCanvas.addEventListener('touchstart', startClean, { passive: false });
-            cleaningCanvas.addEventListener('touchend', endClean);
-            cleaningCanvas.addEventListener('touchmove', cleanPatch, { passive: false });
-            cleaningEndBtn.addEventListener('click', endGame2);
-
-            startTime = Date.now();
-            timerText.textContent = `⏳ Час: ${String(CLEANING_DURATION).padStart(2, '0')}`;
-            gameTimerId = setTimeout(endGame2, CLEANING_DURATION * 1000);
-            animationFrameId = requestAnimationFrame(animateGame2);
-        }
-
-        function endGame2() {
-            cancelAnimationFrame(animationFrameId);
-            clearTimeout(gameTimerId);
-            
-            cleaningCanvas.removeEventListener('mousedown', startClean);
-            cleaningCanvas.removeEventListener('mouseup', endClean);
-            cleaningCanvas.removeEventListener('mousemove', cleanPatch);
-            cleaningCanvas.removeEventListener('touchstart', startClean);
-            cleaningCanvas.removeEventListener('touchend', endClean);
-            cleaningCanvas.removeEventListener('touchmove', cleanPatch);
-            cleaningEndBtn.removeEventListener('click', endGame2);
-
-            canvasContainer2.style.display = 'none';
-            brushElement.style.display = 'none';
-            cleaningEndBtn.style.display = 'none';
-
-            let finalMessage = `🎉 Чудово! Ти почистив ${cleanedPatchesCount} плям! Бали: ${score}!`;
-            if (cleanedPatchesCount === dirtPatches.length) {
-                finalMessage = `🏆 Ти переміг! Зубчик сяє! Бали: ${score}!`;
-                if (!applauseSound.muted) { applauseSound.currentTime = 0; applauseSound.play().catch(e => console.log("🔇 Звук не запустився:", e)); }
-            }
-
-            endMessage.textContent = finalMessage;
-            endMessage.style.display = 'block';
-
-            // *** Оновлено: Повернення до початкового стану ***
-            setTimeout(() => {
-                endMessage.style.display = 'none';
-                stopGame(true);
-                resetToListenState();
-            }, 4000);
-        }
-    </script>
-</body>
-</html>
-
+            listenMessage
