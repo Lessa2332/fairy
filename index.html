@@ -87,13 +87,13 @@
 }
 #startGame2Btn { 
     bottom: clamp(160px, 22vh, 170px); 
-    right: 10%;
+    right: 5%;
     background: linear-gradient(45deg, #87CEFA, #4682B4); 
     color: white; 
 }
 #startGame3Btn { 
     bottom: clamp(80px, 7vh, 80px);  /* ← НИЖЧЕ ніж інші */
-    left: 20%;                        /* ← ПО ЦЕНТРУ */
+    left: 25%;                        /* ← ПО ЦЕНТРУ */
     transform: translateX(-50%);      /* ← ВИРІВНЮВАННЯ */
     background: linear-gradient(45deg, #FFD700, #FFA500); 
     color: #4A00E0; 
@@ -997,14 +997,15 @@ ctx2.fillRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
         );
         ctx2.stroke();
     }
-
-    // ЗУБЧИК - З КОЛІРОМ
-    ctx2.font = `${Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.7}px 'Comic Neue', sans-serif`;
-    ctx2.textAlign = 'center';
-    ctx2.textBaseline = 'middle';
-    ctx2.globalAlpha = 1.0;
-    ctx2.fillStyle = '#4A90E2'; // Синій колір для зубчика
-    ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
+            // Фон
+            ctx3.fillStyle = '#E0F7FA';
+            ctx3.fillRect(0, 0, ctx3.canvas.width, ctx3.canvas.height);
+            
+            // Малюємо великий зуб
+            ctx3.font = `${Math.min(ctx3.canvas.width, ctx3.canvas.height) * 0.6}px 'Comic Neue', sans-serif`;
+            ctx3.textAlign = 'center';
+            ctx3.textBaseline = 'middle';
+            ctx3.fillText("🦷", ctx3.canvas.width / 2, ctx3.canvas.height / 2);
 
     dirtPatches.forEach(patch => {
         if (patch.cleanPercentage < 100) {
@@ -1395,6 +1396,7 @@ ctx2.fillRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
     </script>
 </body>
 </html>
+
 
 
 
