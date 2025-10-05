@@ -92,16 +92,16 @@
     color: white; 
 }
 #startGame3Btn { 
-    bottom: clamp(80px, 9vh, 80px);  /* ← НИЖЧЕ ніж інші */
-    left: 30%;                        /* ← ПО ЦЕНТРУ */
+    bottom: clamp(80px, 7vh, 80px);  /* ← НИЖЧЕ ніж інші */
+    left: 20%;                        /* ← ПО ЦЕНТРУ */
     transform: translateX(-50%);      /* ← ВИРІВНЮВАННЯ */
     background: linear-gradient(45deg, #FFD700, #FFA500); 
     color: #4A00E0; 
     border: 3px solid #4A00E0;
 }
         #rulesBtn { 
-            bottom: clamp(20px, 8vh, 30px); 
-            left: 50%;
+            bottom: clamp(20px, 4vh, 30px); 
+            left: 20%;
             transform: translateX(-50%);
             background: linear-gradient(45deg, #BA68C8, #AB47BC); 
             color: white; 
@@ -982,11 +982,8 @@
         const ctx2 = cleaningCanvas.getContext('2d');
 
 function drawScene2() {
-    ctx2.clearRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
-    
-    // Фон - ПРОЗОРИЙ
-    ctx2.fillStyle = 'rgba(224, 247, 250, 0.3)';
-    ctx2.fillRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
+ctx2.fillStyle = 'rgba(224, 247, 250, 0.1)'; // 10% прозорості
+ctx2.fillRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
     
     // Сонячні промені
     ctx2.fillStyle = 'rgba(255, 255, 255, 0.3)';
@@ -1398,6 +1395,7 @@ function drawScene2() {
     </script>
 </body>
 </html>
+
 
 
 
