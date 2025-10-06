@@ -94,7 +94,7 @@
         }
         #startGame3Btn { 
             bottom: clamp(100px, 15vh, 110px); 
-            left: 10%;
+            left: 15%;
             transform: translateX(-50%);
             background: linear-gradient(40deg, #FFD700, #FFA500); 
             color: #4A00E0; 
@@ -102,7 +102,7 @@
         }
         #rulesBtn { 
             bottom: clamp(20px, 8vh, 30px); 
-            left: 10%;
+            left: 15%;
             transform: translateX(-50%);
             background: linear-gradient(40deg, #BA68C8, #AB47BC); 
             color: white; 
@@ -988,27 +988,12 @@
 
         function drawScene2() {
             ctx2.clearRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
-            
-            // Сонячні промені
-            ctx2.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            for (let i = 0; i < 8; i++) {
-                const angle = (i / 8) * Math.PI * 2;
-                ctx2.beginPath();
-                ctx2.moveTo(cleaningCanvas.width / 2, cleaningCanvas.height / 2);
-                ctx2.lineTo(
-                    cleaningCanvas.width / 2 + Math.cos(angle) * 400,
-                    cleaningCanvas.height / 2 + Math.sin(angle) * 400
-                );
-                ctx2.stroke();
-            }
-
-            // ЗУБЧИК - з кольором для видимості
-            ctx2.font = `${Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.7}px 'Comic Neue', sans-serif`;
-            ctx2.textAlign = 'center';
-            ctx2.textBaseline = 'middle';
-            ctx2.fillStyle = '#4A90E2'; // Синій колір
-            ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
-
+// ЗУБЧИК - з кольором для видимості
+ctx2.font = `${Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.7}px 'Comic Neue', sans-serif`;
+ctx2.textAlign = 'center';
+ctx2.textBaseline = 'middle';
+ctx2.fillStyle = '#4A90E2'; // Синій колір
+ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
             // Плями бруду
             dirtPatches.forEach(patch => {
                 if (patch.cleanPercentage < 100) {
@@ -1395,6 +1380,7 @@
     </script>
 </body>
 </html>
+
 
 
 
