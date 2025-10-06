@@ -72,7 +72,7 @@
         /* КНОПКА ГРАТИ - З'ЯВЛЯЄТЬСЯ ПІСЛЯ ПОВІДОМЛЕННЯ */
         #mainPlayBtn {
             bottom: clamp(140px, 20vh, 150px);
-            left: 50%;
+            left: 10%;
             transform: translateX(-50%);
             background: linear-gradient(45deg, #4CAF50, #8BC34A);
             color: white;
@@ -82,21 +82,19 @@
         /* КНОПКИ ВИБОРУ ГРИ */
         #startGame1Btn { 
             bottom: clamp(160px, 22vh, 170px); 
-            left: 20%;
-            transform: translateX(-50%);
+            left: 10%; 
             background: linear-gradient(40deg, #FF6B6B, #FF8E53); 
             color: white; 
         }
         #startGame2Btn { 
             bottom: clamp(160px, 22vh, 170px); 
-            right: 20%;
-            transform: translateX(50%);
+            right: 10%;
             background: linear-gradient(40deg, #87CEFA, #4682B4); 
             color: white; 
         }
         #startGame3Btn { 
             bottom: clamp(100px, 15vh, 110px); 
-            left: 50%;
+            left: 15%;
             transform: translateX(-50%);
             background: linear-gradient(40deg, #FFD700, #FFA500); 
             color: #4A00E0; 
@@ -104,7 +102,7 @@
         }
         #rulesBtn { 
             bottom: clamp(20px, 8vh, 30px); 
-            left: 50%;
+            left: 15%;
             transform: translateX(-50%);
             background: linear-gradient(40deg, #BA68C8, #AB47BC); 
             color: white; 
@@ -115,12 +113,7 @@
             background: linear-gradient(40deg, #00CED1, #20B2AA); 
             color: white; 
         }
-        #voiceBtn { 
-            top: clamp(15px, 3vh, 20px); 
-            right: clamp(80px, 15vw, 100px); 
-            background: linear-gradient(40deg, #FF69B4, #FF1493); 
-            color: white; 
-        }
+        
         /* КНОПКИ У МІНІ-ІГРАХ */
         #endBtn, #cleaningEndBtn, #cariesEndBtn {
             bottom: clamp(15px, 3vh, 20px);
@@ -189,24 +182,24 @@
         }
         #scoreText { top: clamp(50px, 10vh, 60px); }
         #endMessage, #rulesMessage, #listenMessage {
-    position: fixed;
-    top: clamp(70px, 12vh, 90px); /* трохи нижче за #soundBtn (який на ~15–20px зверху) */
-    left: 50%;
-    transform: translateX(-50%); /* лише по горизонталі */
-    background: linear-gradient(135deg, #4DB6AC, #00796B);
-    color: white;
-    padding: clamp(15px, 4vw, 20px);
-    border-radius: 20px;
-    z-index: 10000;
-    font-size: clamp(1.2em, 5vw, 1.6em);
-    text-align: center;
-    font-family: 'Comic Neue';
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    display: none;
-    max-width: 90%;
-    width: 90%;
-    border: 3px solid #FFD700;
-}
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #4DB6AC, #00796B);
+            color: white;
+            padding: clamp(15px, 4vw, 20px);
+            border-radius: 20px;
+            z-index: 10000;
+            font-size: clamp(1.2em, 5vw, 1.6em);
+            text-align: center;
+            font-family: 'Comic Neue';
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            display: none;
+            max-width: 90%;
+            width: 90%;
+            border: 3px solid #FFD700;
+        }
         #rulesMessage h3 { 
             font-size: clamp(1.4em, 6vw, 1.8em); 
             margin: clamp(5px, 1vh, 10px) 0; 
@@ -290,8 +283,10 @@
             Покрути зубчика пальчиком! 😊
         </div>
     </div>
+
     <p id="timerText" class="ui-info-text" style="display: none;">⏳ Час: 00</p>
     <p id="scoreText" class="ui-info-text" style="display: none;">🌟 Бали: 0</p>
+
     <div id="rulesMessage">
         <h3>🎮 Як грати з Зубчиком?</h3>
         <ul>
@@ -301,25 +296,30 @@
         </ul>
         <button id="closeRulesBtn">Грати! 🚀</button>
     </div>
+
     <div id="endMessage"></div>
     <div id="listenMessage">
         <p>🦷 Привіт, друже! Я - Зубчик-Веселунчик! 😊</p>
         <p>Хочеш послухати мою пісеньку?</p>
         <button id="listenBtn">Послухати 🎶</button>
     </div>
+
     <div id="canvasGameContainer" style="display: none;">
         <canvas id="gameCanvas"></canvas>
         <button id="endBtn" class="ui-btn" style="display: none;">▶️ Чисти зубчик!</button>
     </div>
+
     <div id="cleaningGameContainer" style="display: none;">
         <canvas id="cleaningCanvas"></canvas>
         <div id="brush">🪥</div> 
         <button id="cleaningEndBtn" class="ui-btn" style="display: none;">✅ Готово!</button>
     </div>
+
     <div id="cariesGameContainer" style="display: none;">
         <canvas id="cariesCanvas"></canvas>
         <button id="cariesEndBtn" class="ui-btn" style="display: none;">✅ Готово!</button>
     </div>
+
     <a-scene
         mindar-image="imageTargetSrc: my-marker.mind; autoStart: true; maxTrackTime: 10000;"
         vr-mode-ui="enabled: false"
@@ -335,10 +335,12 @@
             <audio id="applauseSound" src="assets/audio/applause.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
             <audio id="toothClickSound" src="assets/audio/sound5.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
             <audio id="toothMessageSound" src="assets/audio/sound1.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
-            <audio id="toothVoiceSound" src="assets/audio/tooth-voice.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
         </a-assets>
+        
+        <!-- Додаємо основний ambient light для всієї сцени -->
         <a-entity light="type: ambient; color: #FFFFFF; intensity: 1.0"></a-entity>
         <a-entity light="type: directional; color: #FFFFFF; intensity: 0.8" position="1 1 1"></a-entity>
+        
         <a-camera look-controls="enabled: false" position="0 0 0">
             <a-cursor
                 raycaster="objects: .clickable;"
@@ -361,36 +363,46 @@
             ></a-gltf-model>
         </a-entity>
     </a-scene>
+    
     <button id="soundBtn" class="ui-btn">🔊 Звук</button>
-    <button id="voiceBtn" class="ui-btn" style="display: none;">🗣️ Голос</button>
     <button id="mainPlayBtn" class="ui-btn" style="display: none;">▶️ ГРАТИ!</button>
+    
     <button id="startGame1Btn" class="ui-btn" style="display: none;">🍎 Гра "Здорова Їжа"</button>
     <button id="startGame2Btn" class="ui-btn" style="display: none;">✨ Гра "Чистка Зубів"</button>
     <button id="startGame3Btn" class="ui-btn" style="display: none;">🔍 Гра "Знайди Кариєс"</button>
     <button id="rulesBtn" class="ui-btn" style="display: none;">Як грати?</button>
+    
     <a href="https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi" id="youtubeBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">❤️ Автор</a>
     <a href="https://nikadent-family.com.ua/ua/" id="aboutBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">ℹ️ Про нас</a>
     <button id="resetRotationBtn" class="ui-btn">🔄 Скинути</button>
+
     <button id="returnBtn" class="ui-btn" style="display: none;">🚪 Повернутися до Зубчика</button>
+
     <script>
+        // === 0. ІНІЦІАЛІЗАЦІЯ ЗМІННИХ ТА АДАПТАЦІЯ AR ===
+
         function fixHeight() { document.documentElement.style.height = window.innerHeight + 'px'; }
         fixHeight();
         window.addEventListener('resize', fixHeight);
+
         const AScene = document.querySelector('a-scene');
         const loader = document.querySelector('#loader');
         const targetEntity = document.querySelector('#target-entity');
         const toothModel = document.querySelector('#tooth-model');
+        
+        // КНОПКИ НОВОГО ФЛОУ
         const mainPlayBtn = document.querySelector('#mainPlayBtn');
         const startGame1Btn = document.querySelector('#startGame1Btn');
         const startGame2Btn = document.querySelector('#startGame2Btn');
         const startGame3Btn = document.querySelector('#startGame3Btn');
         const rulesBtn = document.querySelector('#rulesBtn');
         const soundBtn = document.querySelector('#soundBtn');
-        const voiceBtn = document.querySelector('#voiceBtn');
         const returnBtn = document.querySelector('#returnBtn');
+        
         const youtubeBtn = document.querySelector('#youtubeBtn');
         const aboutBtn = document.querySelector('#aboutBtn');
         const resetRotationBtn = document.querySelector('#resetRotationBtn');
+
         const timerText = document.getElementById('timerText');
         const scoreText = document.getElementById('scoreText');
         const endMessage = document.getElementById('endMessage');
@@ -408,16 +420,21 @@
         const cleaningCanvas = document.getElementById('cleaningCanvas');
         const cariesCanvas = document.getElementById('cariesCanvas');
         const brushElement = document.getElementById('brush');
+        
+        // АУДІО
         const bgMusic = document.querySelector('#bg-music');
         const applauseSound = document.querySelector('#applauseSound');
         const toothClickSound = document.querySelector('#toothClickSound');
         const toothMessageSound = document.querySelector('#toothMessageSound'); 
-        const toothVoiceSound = document.querySelector('#toothVoiceSound');
+
+        // СТАНИ ГРИ
         let isGameRunning = false;
         let gameSelectionActive = false;
         let isCleaningActive = false;
         let isTargetVisible = false;
         let wasBgMusicPlaying = false; 
+        
+        // ІГРОВІ ЗМІННІ
         let score = 0;
         let currentGame = null;
         let animationFrameId = null;
@@ -429,39 +446,19 @@
         let lastSpawnTime = 0;
         let cleanedPatchesCount = 0;
         let foundCariesCount = 0;
+
         const GAME1_DURATION = 45;
         const CLEANING_DURATION = 30;
         const CARIES_DURATION = 40;
-        const ITEM_SIZE = 75;
+        const ITEM_SIZE = 75; // Збільшено для дитини
         const FALL_SPEED_MULTIPLIER = 2.5;
-        const BRUSH_SIZE = 95;
+        const BRUSH_SIZE = 95; // Збільшено для дитини
 
-        // === 🔊 РОЗБЛОКУВАННЯ АУДІО ПРИ ПЕРШОМУ ДОТИКУ ===
-        function unlockAudio() {
-            [bgMusic, applauseSound, toothClickSound, toothMessageSound, toothVoiceSound].forEach(audio => {
-                audio.muted = false;
-                audio.play().catch(() => {});
-            });
-            soundBtn.textContent = "🔇 Без звуку";
-            document.body.removeEventListener('click', unlockAudio);
-            document.body.removeEventListener('touchstart', unlockAudio);
-        }
-        document.body.addEventListener('click', unlockAudio, { once: true });
-        document.body.addEventListener('touchstart', unlockAudio, { once: true });
-
-        function playToothVoice() {
-            if (!toothVoiceSound.muted) {
-                wasBgMusicPlaying = !bgMusic.muted && !bgMusic.paused;
-                if (!bgMusic.paused) bgMusic.pause();
-                toothVoiceSound.currentTime = 0;
-                toothVoiceSound.play().catch(e => console.log("🔇 Голос не запустився:", e));
-                toothVoiceSound.onended = () => {
-                    if (!bgMusic.muted && wasBgMusicPlaying) {
-                        bgMusic.play().catch(e => console.log("🔇 Музика не відновилася:", e));
-                    }
-                };
-            }
-        }
+        // Початкове налаштування звуку
+        [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = true);
+        soundBtn.textContent = "🔊 Звук"; 
+        
+        // === КОМПОНЕНТ ДЛЯ ОБРОБКИ СЕНСОРНИХ ЖЕСТІВ ===
 
         AFRAME.registerComponent('touch-gestures', {
             schema: {
@@ -477,17 +474,22 @@
                 this.startPos = { x: 0, y: 0 };
                 this.currentScale = this.data.initialScale;
                 this.targetEl = document.querySelector('#' + this.data.targetId);
+
                 if (!this.targetEl) {
                     console.error('Цільова 3D модель не знайдена в компоненті touch-gestures');
                     return;
                 }
+                
                 const scale = this.data.initialScale;
                 this.targetEl.object3D.scale.set(scale, scale, scale);
+                
                 const targetArea = this.el.sceneEl; 
+
                 targetArea.addEventListener('touchstart', (e) => {
                     if (isGameRunning || gameSelectionActive || rulesMessage.style.display === 'block' || listenMessage.style.display === 'block') {
                         return;
                     }
+                    
                     e.preventDefault();
                     if (e.touches.length === 1) {
                         this.isRotating = true;
@@ -503,10 +505,12 @@
                         this.currentScale = this.targetEl.object3D.scale.x;
                     }
                 }, { passive: false });
+
                 targetArea.addEventListener('touchmove', (e) => {
                     if (isGameRunning || gameSelectionActive || rulesMessage.style.display === 'block' || listenMessage.style.display === 'block') {
                         return;
                     }
+                    
                     e.preventDefault();
                     if (this.isPinching && e.touches.length === 2) {
                         const currentDistance = Math.hypot(
@@ -515,17 +519,22 @@
                         );
                         const scaleFactor = currentDistance / this.initialDistance;
                         let newScale = this.currentScale * scaleFactor;
+
                         newScale = Math.max(this.data.minScale, Math.min(this.data.maxScale, newScale));
+                        
                         this.targetEl.object3D.scale.set(newScale, newScale, newScale);
                     } else if (this.isRotating && e.touches.length === 1) {
                         const deltaX = (e.touches[0].pageX - this.startPos.x) * this.data.rotationSpeed;
                         const deltaY = (e.touches[0].pageY - this.startPos.y) * this.data.rotationSpeed;
+                        
                         this.targetEl.object3D.rotation.y += THREE.MathUtils.degToRad(deltaX);
                         this.targetEl.object3D.rotation.x += THREE.MathUtils.degToRad(deltaY);
+
                         this.startPos.x = e.touches[0].pageX;
                         this.startPos.y = e.touches[0].pageY;
                     }
                 }, { passive: false });
+
                 targetArea.addEventListener('touchend', () => {
                     this.isRotating = false;
                     this.isPinching = false;
@@ -533,13 +542,14 @@
             }
         });
 
+        // === 1. ВЗАЄМОДІЯ З МОДЕЛЛЮ ===
+        
         toothModel.addEventListener('click', () => {
             if (!isGameRunning && !gameSelectionActive && rulesMessage.style.display !== 'block' && listenMessage.style.display !== 'block') {
                 if (!toothClickSound.muted) {
                     toothClickSound.currentTime = 0;
                     toothClickSound.play().catch(e => console.log("🔇 Звук не запустився:", e));
                 }
-                playToothVoice();
                 const currentScale = toothModel.object3D.scale.x;
                 toothModel.setAttribute('animation__pulse', {
                     property: 'scale',
@@ -557,20 +567,25 @@
         resetRotationBtn.addEventListener('click', () => {
             if (!isGameRunning) {
                 toothModel.object3D.rotation.set(0, 0, 0);
+                
                 const gestures = AScene.components['touch-gestures'];
                 const initialScale = gestures ? gestures.data.initialScale : 0.3;
                 toothModel.object3D.scale.set(initialScale, initialScale, initialScale);
+                
                 endMessage.textContent = "🦷 Зубчик повернувся на місце! 😊";
                 endMessage.style.display = 'block';
                 setTimeout(() => { endMessage.style.display = 'none'; }, 2000);
             }
         });
 
+        // === 2. КЕРУВАННЯ UI ТА AR ===
+
         function pauseSceneAndHideModel() {
             AScene.pause();
             AScene.style.display = 'none';
             toothModel.object3D.visible = false;
         }
+
         function resumeSceneAndShowModel() {
             AScene.style.display = 'block';
             AScene.play();
@@ -579,43 +594,35 @@
             }
         }
 
-        const allUIElements = [
-            youtubeBtn, aboutBtn, soundBtn, voiceBtn,
-            timerText, scoreText,
-            returnBtn, mainPlayBtn,
-            startGame1Btn, startGame2Btn, startGame3Btn,
-            rulesBtn, resetRotationBtn,
-            endBtn, cleaningEndBtn, cariesEndBtn,
-            listenMessage, rulesMessage
-        ];
-
         function updateUIOnTarget() {
             const isMenuShown = rulesMessage.style.display === 'block';
-            allUIElements.forEach(el => el.style.display = 'none');
-            loader.style.display = 'none';
 
+            [youtubeBtn, aboutBtn, soundBtn, timerText, scoreText, returnBtn, mainPlayBtn, startGame1Btn, startGame2Btn, startGame3Btn, rulesBtn, resetRotationBtn, listenMessage].forEach(btn => btn.style.display = 'none');
+            loader.style.display = 'none';
+            
             if (isGameRunning) {
                 timerText.style.display = 'block';
                 scoreText.style.display = 'block';
                 returnBtn.style.display = 'block';
-                if (currentGame === 'game1') endBtn.style.display = 'block';
-                else if (currentGame === 'game2') cleaningEndBtn.style.display = 'block';
-                else if (currentGame === 'game3') cariesEndBtn.style.display = 'block';
             } else if (isTargetVisible) {
                 youtubeBtn.style.display = 'block';
                 aboutBtn.style.display = 'block';
                 soundBtn.style.display = 'block';
-                voiceBtn.style.display = 'block';
                 resetRotationBtn.style.display = 'block';
 
-                if (gameSelectionActive && !isMenuShown) {
-                    startGame1Btn.style.display = 'block';
-                    startGame2Btn.style.display = 'block';
-                    startGame3Btn.style.display = 'block';
-                    rulesBtn.style.display = 'block';
-                } else if (!isMenuShown) {
-                    if (listenMessage.style.display !== 'block') {
-                        mainPlayBtn.style.display = 'block';
+                if (gameSelectionActive) {
+                    startGame1Btn.style.display = !isMenuShown ? 'block' : 'none';
+                    startGame2Btn.style.display = !isMenuShown ? 'block' : 'none';
+                    startGame3Btn.style.display = !isMenuShown ? 'block' : 'none';
+                    rulesBtn.style.display = !isMenuShown ? 'block' : 'none';
+                    listenMessage.style.display = 'none';
+                } else {
+                    if (!isMenuShown) {
+                        if (listenMessage.style.display === 'block') {
+                            mainPlayBtn.style.display = 'none';
+                        } else {
+                            mainPlayBtn.style.display = 'block';
+                        }
                     }
                 }
             } else {
@@ -628,21 +635,26 @@
             toothModel.object3D.visible = true;
             updateUIOnTarget();
             if (!bgMusic.muted && !isGameRunning && wasBgMusicPlaying) {
-                bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
+                 bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
             }
         });
+
         targetEntity.addEventListener('targetLost', () => {
             isTargetVisible = false;
             wasBgMusicPlaying = !bgMusic.muted && !bgMusic.paused;
             if (!bgMusic.paused) bgMusic.pause();
             updateUIOnTarget();
         });
-        updateUIOnTarget();
+
+        updateUIOnTarget(); 
+
+        // === 3. КЕРУВАННЯ ЗВУКОМ та ФЛОУ ===
 
         function toggleSound() {
             const isMuted = !bgMusic.muted;
-            [bgMusic, applauseSound, toothClickSound, toothMessageSound, toothVoiceSound].forEach(a => a.muted = isMuted);
+            [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = isMuted);
             soundBtn.textContent = isMuted ? "🔊 Звук" : "🔇 Без звуку";
+
             if (!isMuted && isTargetVisible && !isGameRunning) {
                 bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
                 wasBgMusicPlaying = true;
@@ -652,16 +664,17 @@
             }
         }
         soundBtn.addEventListener('click', toggleSound);
-        voiceBtn.addEventListener('click', playToothVoice);
+
         rulesBtn.addEventListener('click', () => {
             rulesMessage.style.display = 'block';
             updateUIOnTarget();
         });
+
         closeRulesBtn.addEventListener('click', () => {
             rulesMessage.style.display = 'none';
             showGameSelectionMenu();
         });
-
+        
         function resetToListenState() {
             isGameRunning = false;
             gameSelectionActive = false;
@@ -669,6 +682,7 @@
             mainPlayBtn.style.display = 'none';
             updateUIOnTarget();
         }
+
         function showGameSelectionMenu() {
             gameSelectionActive = true;
             endMessage.style.display = 'none';
@@ -676,25 +690,35 @@
             resumeSceneAndShowModel();
             updateUIOnTarget();
         }
+        
         mainPlayBtn.addEventListener('click', showGameSelectionMenu);
+        
         listenBtn.addEventListener('click', () => {
             listenMessage.style.display = 'none'; 
+
             if (bgMusic.muted) {
-                [bgMusic, applauseSound, toothClickSound, toothMessageSound, toothVoiceSound].forEach(a => a.muted = false); 
+                [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = false); 
                 soundBtn.textContent = "🔇 Без звуку";
             }
+            
             wasBgMusicPlaying = !bgMusic.muted && !bgMusic.paused;
+
             if (toothMessageSound) {
                 bgMusic.pause(); 
                 toothMessageSound.currentTime = 0;
+                
                 toothMessageSound.play().catch(e => console.error("Повідомлення від Зубчика не запустилося:", e));
             }
+            
             const messageDuration = toothMessageSound && toothMessageSound.duration && isFinite(toothMessageSound.duration) ? toothMessageSound.duration * 1000 + 500 : 3500;
+            
             setTimeout(() => {
                 showGameSelectionMenu();
             }, messageDuration); 
         });
 
+        // === 4. КЕРУВАННЯ ГРОЮ (ЗАПУСК/ЗУПИНКА) ===
+        
         function returnToTooth() {
             stopGame(false); 
             resetToListenState();
@@ -703,6 +727,7 @@
 
         function startCanvasGame(gameType) {
             if (!isTargetVisible) return;
+
             isGameRunning = true;
             gameSelectionActive = false;
             score = 0;
@@ -711,30 +736,43 @@
             scoreText.textContent = `🌟 Бали: 0`;
             updateUIOnTarget();
             pauseSceneAndHideModel();
+            
             wasBgMusicPlaying = !bgMusic.muted && !bgMusic.paused;
             if (!bgMusic.paused) bgMusic.pause();
+
             canvasContainer1.style.display = 'none';
             canvasContainer2.style.display = 'none';
             canvasContainer3.style.display = 'none';
+            
+            endBtn.style.display = 'none';
+            cleaningEndBtn.style.display = 'none';
+            cariesEndBtn.style.display = 'none';
+
             if (gameType === 'game1') {
                 canvasContainer1.style.display = 'block';
+                endBtn.style.display = 'block';
                 initGame1(GAME1_DURATION);
             } else if (gameType === 'game2') {
                 canvasContainer2.style.display = 'block';
+                cleaningEndBtn.style.display = 'block';
                 initGame2();
             } else if (gameType === 'game3') {
                 canvasContainer3.style.display = 'block';
+                cariesEndBtn.style.display = 'block';
                 initCariesGame();
             }
         }
+
         startGame1Btn.addEventListener('click', () => startCanvasGame('game1'));
         startGame2Btn.addEventListener('click', () => startCanvasGame('game2'));
         startGame3Btn.addEventListener('click', () => startCanvasGame('game3'));
 
         function stopGame(fromEnd = true) {
             isGameRunning = false;
+            
             cancelAnimationFrame(animationFrameId);
             clearTimeout(gameTimerId);
+
             gameCanvas.removeEventListener('click', handleItemClick);
             gameCanvas.removeEventListener('touchstart', handleItemClick);
             endBtn.removeEventListener('click', endGame1);
@@ -748,30 +786,39 @@
             cariesCanvas.removeEventListener('click', handleCariesClick);
             cariesCanvas.removeEventListener('touchstart', handleCariesClick);
             cariesEndBtn.removeEventListener('click', endCariesGame);
+
             canvasContainer1.style.display = 'none';
             canvasContainer2.style.display = 'none';
             canvasContainer3.style.display = 'none';
             brushElement.style.display = 'none';
             endMessage.style.display = 'none';
+            endBtn.style.display = 'none';
+            cleaningEndBtn.style.display = 'none';
+            cariesEndBtn.style.display = 'none';
+
             resumeSceneAndShowModel();
+            
             if (!bgMusic.muted && wasBgMusicPlaying) {
-                bgMusic.play().catch(e => console.log("Музика не відновилася після гри:", e));
+                 bgMusic.play().catch(e => console.log("Музика не відновилася після гри:", e));
             }
         }
-
+        
         // === 5. ГРА 1: ЗДОРОВА ЇЖА ===
         const ctx1 = gameCanvas.getContext('2d');
+        
         function playPositiveSound() {
             if (!toothClickSound.muted) { toothClickSound.currentTime = 0; toothClickSound.play().catch(e => console.log("🔇 Звук не запустився:", e)); }
         }
         function playNegativeSound() {
              if (!toothClickSound.muted) { toothClickSound.currentTime = 0; toothClickSound.play().catch(e => console.log("🔇 Негативний звук не запустився:", e)); }
         }
+
         function spawnItem() {
             const goodItems = ['🦷', '🪥', '🍎', '🥕', '💧', '🥛', '🥦', '🍌'];
             const badItems = ['🍔', '🍟', '🍕', '🍦', '🍭', '🍫', '🥤', '🍰'];
             const isGood = Math.random() > 0.4;
             const itemValue = isGood ? goodItems[Math.floor(Math.random() * goodItems.length)] : badItems[Math.floor(Math.random() * badItems.length)];
+
             fallingItems.push({
                 x: Math.random() * (gameCanvas.width - ITEM_SIZE),
                 y: -ITEM_SIZE,
@@ -780,29 +827,40 @@
                 isGood: isGood
             });
         }
+
         function drawItems() {
             ctx1.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+            
+            // Фон
             ctx1.fillStyle = '#E0F7FA';
             ctx1.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+            
+            // Хмаринки
             ctx1.fillStyle = 'rgba(255, 255, 255, 0.8)';
             ctx1.beginPath();
             ctx1.arc(100, 80, 30, 0, Math.PI * 2);
             ctx1.arc(130, 70, 40, 0, Math.PI * 2);
             ctx1.arc(160, 80, 35, 0, Math.PI * 2);
             ctx1.fill();
+            
             ctx1.beginPath();
             ctx1.arc(gameCanvas.width - 100, 120, 35, 0, Math.PI * 2);
             ctx1.arc(gameCanvas.width - 130, 110, 45, 0, Math.PI * 2);
             ctx1.arc(gameCanvas.width - 160, 120, 40, 0, Math.PI * 2);
             ctx1.fill();
+
             ctx1.font = `${ITEM_SIZE}px 'Comic Neue', sans-serif`;
             ctx1.textAlign = 'center';
             ctx1.textBaseline = 'middle';
-            ctx1.fillStyle = '#E0F7FA';
+
+            // Малюємо зубчик внизу
+            ctx1.font = `${ITEM_SIZE * 2}px 'Comic Neue', sans-serif`;
             ctx1.globalAlpha = 0.3;
             ctx1.fillText("🦷", gameCanvas.width / 2, gameCanvas.height - 30);
             ctx1.globalAlpha = 1.0;
+
             ctx1.font = `${ITEM_SIZE}px 'Comic Neue', sans-serif`;
+
             fallingItems.forEach(item => {
                 if (item.isGood) {
                     ctx1.fillStyle = '#4CAF50';
@@ -811,20 +869,26 @@
                 }
                 ctx1.fillText(item.value, item.x + ITEM_SIZE / 2, item.y + ITEM_SIZE / 2);
             });
+            
+            // Інструкція
             ctx1.fillStyle = '#00796B';
-            ctx1.font = '14px "Comic Neue", sans-serif';
+            ctx1.font = '24px "Comic Neue", sans-serif';
             ctx1.textAlign = 'center';
             ctx1.fillText('🍎 Лови здорову їжу! 🍔 Уникай шкідливої!', gameCanvas.width / 2, 40);
         }
+
         function handleItemClick(e) {
             e.preventDefault();
+
             const rect = gameCanvas.getBoundingClientRect();
             const clickX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
             const clickY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+
             for (let i = fallingItems.length - 1; i >= 0; i--) {
                 const item = fallingItems[i];
                 if (clickX >= item.x && clickX <= item.x + ITEM_SIZE &&
                     clickY >= item.y && clickY <= item.y + ITEM_SIZE) {
+
                     if (item.isGood) {
                         score += 10;
                         playPositiveSound();
@@ -838,21 +902,27 @@
                 }
             }
         }
+
         function updateGame1() {
             if (!isGameRunning) return;
+
             const now = Date.now();
             const elapsedSeconds = Math.floor((now - startTime) / 1000);
             const timeLeft = GAME1_DURATION - elapsedSeconds;
             timerText.textContent = `⏳ Час: ${String(timeLeft).padStart(2, '0')}`;
+
             if (timeLeft <= 0) {
                 endGame1();
                 return;
             }
+
             const spawnInterval = 600 - (elapsedSeconds * 10);
+
             if (now - lastSpawnTime > Math.max(150, spawnInterval)) {
                 spawnItem();
                 lastSpawnTime = now;
             }
+
             fallingItems = fallingItems.filter(item => {
                 if (item.y < gameCanvas.height + ITEM_SIZE) {
                     item.y += item.vy;
@@ -864,12 +934,15 @@
                 }
                 return false;
             });
+
             drawItems();
         }
+
         function animateGame1() {
             updateGame1();
             animationFrameId = requestAnimationFrame(animateGame1);
         }
+
         function initGame1(duration) {
             currentGame = 'game1';
             gameCanvas.width = window.innerWidth;
@@ -878,22 +951,31 @@
             lastSpawnTime = Date.now();
             startTime = Date.now();
             timerText.textContent = `⏳ Час: ${String(duration).padStart(2, '0')}`;
+
             gameCanvas.addEventListener('click', handleItemClick);
             gameCanvas.addEventListener('touchstart', handleItemClick, { passive: false });
             endBtn.addEventListener('click', endGame1);
+
             gameTimerId = setTimeout(endGame1, duration * 1000);
             animationFrameId = requestAnimationFrame(animateGame1);
         }
+
         function endGame1() {
             cancelAnimationFrame(animationFrameId);
             clearTimeout(gameTimerId);
+            
             gameCanvas.removeEventListener('click', handleItemClick);
             gameCanvas.removeEventListener('touchstart', handleItemClick);
             endBtn.removeEventListener('click', endGame1);
+
             canvasContainer1.style.display = 'none';
+            endBtn.style.display = 'none';
+
             endMessage.textContent = `🎉 Клас! Ти заробив ${score} балів! Хочеш почистити зубчик? 🧼`;
             endMessage.style.display = 'block';
+
             if (!applauseSound.muted) { applauseSound.currentTime = 0; applauseSound.play().catch(e => console.log("🔇 Звук не запустився:", e)); }
+
             setTimeout(() => {
                 endMessage.style.display = 'none';
                 stopGame(true); 
@@ -903,13 +985,16 @@
 
         // === 6. ГРА 2: ЧИСТКА ЗУБІВ ===
         const ctx2 = cleaningCanvas.getContext('2d');
+
         function drawScene2() {
             ctx2.clearRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
-            ctx2.font = `${Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.7}px 'Comic Neue', sans-serif`;
-            ctx2.textAlign = 'center';
-            ctx2.textBaseline = 'middle';
-            ctx2.fillStyle = '#4A90E2';
-            ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
+// ЗУБЧИК - з кольором для видимості
+ctx2.font = `${Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.7}px 'Comic Neue', sans-serif`;
+ctx2.textAlign = 'center';
+ctx2.textBaseline = 'middle';
+ctx2.fillStyle = '#4A90E2'; // Синій колір
+ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
+            // Плями бруду
             dirtPatches.forEach(patch => {
                 if (patch.cleanPercentage < 100) {
                     ctx2.globalAlpha = 0.8 * (1 - patch.cleanPercentage / 100);
@@ -920,30 +1005,40 @@
                 }
             });
             ctx2.globalAlpha = 1.0;
+            
+            // Інструкція
             ctx2.fillStyle = '#00796B';
             ctx2.font = '24px "Comic Neue", sans-serif';
             ctx2.textAlign = 'center';
             ctx2.fillText('🪥 Чисти зубчик щіткою!', cleaningCanvas.width / 2, 40);
         }
+
         function startClean(e) {
             e.preventDefault();
             isCleaningActive = true;
         }
+
         function endClean(e) {
             isCleaningActive = false;
         }
+
         function cleanPatch(e) {
             if (!isCleaningActive) return;
             e.preventDefault();
+
             const rect = cleaningCanvas.getBoundingClientRect();
             const currentX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
             const currentY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+
             brushElement.style.left = `${currentX - BRUSH_SIZE / 2}px`;
             brushElement.style.top = `${currentY - BRUSH_SIZE / 2}px`;
+
             let patchesCleaned = false;
+
             dirtPatches.forEach(patch => {
                 if (patch.cleanPercentage < 100) {
                     const distance = Math.sqrt(Math.pow(patch.x - currentX, 2) + Math.pow(patch.y - currentY, 2));
+
                     if (distance < patch.radius + BRUSH_SIZE / 4) {
                         patch.cleanPercentage += 2;
                         if (patch.cleanPercentage >= 100) {
@@ -957,25 +1052,33 @@
                     }
                 }
             });
+
             if (patchesCleaned) {
                 drawScene2();
             }
+
             if (cleanedPatchesCount === dirtPatches.length) {
                 endGame2();
             }
         }
+
         function animateGame2() {
             if (!isGameRunning || currentGame !== 'game2') return;
+
             const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
             const timeLeft = CLEANING_DURATION - elapsedSeconds;
             timerText.textContent = `⏳ Час: ${String(timeLeft).padStart(2, '0')}`;
+
             if (timeLeft <= 0) {
                 endGame2();
                 return;
             }
+
             drawScene2();
+
             animationFrameId = requestAnimationFrame(animateGame2);
         }
+
         function initGame2() {
             currentGame = 'game2';
             cleaningCanvas.width = window.innerWidth;
@@ -986,19 +1089,23 @@
             scoreText.textContent = `🌟 Бали: 0`;
             brushElement.style.display = 'block';
             isCleaningActive = false;
+
             const centerX = cleaningCanvas.width / 2;
             const centerY = cleaningCanvas.height / 2;
             const toothRadius = Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.35;
+
             for (let i = 0; i < 7; i++) {
                 const angle = Math.random() * 2 * Math.PI;
                 const distance = toothRadius * (0.3 + Math.random() * 0.6); 
+
                 dirtPatches.push({
                     x: centerX + distance * Math.cos(angle),
                     y: centerY + distance * Math.sin(angle),
-                    radius: Math.random() * 25 + 40,
+                    radius: Math.random() * 25 + 40, // Збільшено для дитини
                     cleanPercentage: 0
                 });
             }
+
             drawScene2();
             cleaningCanvas.addEventListener('mousedown', startClean);
             cleaningCanvas.addEventListener('mouseup', endClean);
@@ -1007,11 +1114,13 @@
             cleaningCanvas.addEventListener('touchend', endClean);
             cleaningCanvas.addEventListener('touchmove', cleanPatch, { passive: false });
             cleaningEndBtn.addEventListener('click', endGame2);
+
             startTime = Date.now();
             timerText.textContent = `⏳ Час: ${String(CLEANING_DURATION).padStart(2, '0')}`;
             gameTimerId = setTimeout(endGame2, CLEANING_DURATION * 1000);
             animationFrameId = requestAnimationFrame(animateGame2);
         }
+
         function makeToothSmile() {
             toothModel.setAttribute('animation-mixer', {
                 clip: 'Smile',
@@ -1019,6 +1128,7 @@
                 timeScale: 1.0,
                 autoplay: true
             });
+            
             toothModel.setAttribute('animation__pulse', {
                 property: 'scale',
                 to: '0.35 0.35 0.35',
@@ -1027,9 +1137,11 @@
                 loop: true,
                 easing: 'easeInOutSine'
             });
+            
             endMessage.textContent = "😊 Зубчик щасливий і сяє! Молодець!";
             endMessage.style.display = 'block';
         }
+
         function resetToothAnimation() {
             toothModel.setAttribute('animation-mixer', {
                 clip: 'Idle',
@@ -1037,14 +1149,18 @@
                 timeScale: 1.0,
                 autoplay: true
             });
+            
             toothModel.removeAttribute('animation__pulse');
+            
             const gestures = AScene.components['touch-gestures'];
             const initialScale = gestures ? gestures.data.initialScale : 0.3;
             toothModel.object3D.scale.set(initialScale, initialScale, initialScale);
         }
+
         function endGame2() {
             cancelAnimationFrame(animationFrameId);
             clearTimeout(gameTimerId);
+            
             cleaningCanvas.removeEventListener('mousedown', startClean);
             cleaningCanvas.removeEventListener('mouseup', endClean);
             cleaningCanvas.removeEventListener('mousemove', cleanPatch);
@@ -1052,8 +1168,11 @@
             cleaningCanvas.removeEventListener('touchend', endClean);
             cleaningCanvas.removeEventListener('touchmove', cleanPatch);
             cleaningEndBtn.removeEventListener('click', endGame2);
+
             canvasContainer2.style.display = 'none';
             brushElement.style.display = 'none';
+            cleaningEndBtn.style.display = 'none';
+
             let finalMessage = `🎉 Чудово! Ти почистив ${cleanedPatchesCount} плям! Бали: ${score}!`;
             if (cleanedPatchesCount === dirtPatches.length) {
                 finalMessage = `🏆 Ти переміг! Зубчик сяє! Бали: ${score}!`;
@@ -1061,13 +1180,16 @@
                     applauseSound.currentTime = 0; 
                     applauseSound.play(); 
                 }
+                
                 setTimeout(() => {
                     resumeSceneAndShowModel();
                     makeToothSmile();
                 }, 1000);
             }
+
             endMessage.textContent = finalMessage;
             endMessage.style.display = 'block';
+
             setTimeout(() => {
                 endMessage.style.display = 'none';
                 stopGame(true);
@@ -1078,14 +1200,18 @@
 
         // === 7. ГРА 3: ЗНАЙДИ КАРИЄС ===
         const ctx3 = cariesCanvas.getContext('2d');
+
         function initCariesGame() {
             currentGame = 'game3';
             cariesCanvas.width = window.innerWidth;
             cariesCanvas.height = window.innerHeight;
+            
             cariesSpots = [];
             foundCariesCount = 0;
             score = 0;
             scoreText.textContent = `🌟 Бали: 0`;
+            
+            // Створюємо "кариєсні" плями
             const numSpots = 8;
             for (let i = 0; i < numSpots; i++) {
                 cariesSpots.push({
@@ -1096,67 +1222,92 @@
                     id: i
                 });
             }
+            
             drawCariesGame();
+            
+            // Обробники подій
             cariesCanvas.addEventListener('click', handleCariesClick);
             cariesCanvas.addEventListener('touchstart', handleCariesClick, { passive: false });
             cariesEndBtn.addEventListener('click', endCariesGame);
+            
             startTime = Date.now();
             timerText.textContent = `⏳ Час: ${String(CARIES_DURATION).padStart(2, '0')}`;
             gameTimerId = setTimeout(endCariesGame, CARIES_DURATION * 1000);
             animationFrameId = requestAnimationFrame(animateCariesGame);
         }
+
         function drawCariesGame() {
             ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height);
+            
+            // Фон
             ctx3.fillStyle = '#E0F7FA';
             ctx3.fillRect(0, 0, ctx3.canvas.width, ctx3.canvas.height);
+            
+            // Малюємо великий зуб
             ctx3.font = `${Math.min(ctx3.canvas.width, ctx3.canvas.height) * 0.6}px 'Comic Neue', sans-serif`;
             ctx3.textAlign = 'center';
             ctx3.textBaseline = 'middle';
             ctx3.fillText("🦷", ctx3.canvas.width / 2, ctx3.canvas.height / 2);
+            
+            // Малюємо кариєсні плями
             cariesSpots.forEach(spot => {
                 if (!spot.found) {
+                    // Темно-коричневі плями для кариєсу
                     ctx3.fillStyle = 'rgba(139, 69, 19, 0.8)';
                     ctx3.beginPath();
                     ctx3.arc(spot.x, spot.y, spot.radius, 0, 2 * Math.PI);
                     ctx3.fill();
+                    
+                    // Додаємо текстуру
                     ctx3.fillStyle = 'rgba(101, 67, 33, 0.9)';
                     ctx3.beginPath();
                     ctx3.arc(spot.x - 5, spot.y - 5, spot.radius * 0.4, 0, 2 * Math.PI);
                     ctx3.fill();
                 } else {
+                    // Малюємо "виліковані" місця
                     ctx3.fillStyle = 'rgba(255, 255, 255, 0.9)';
                     ctx3.beginPath();
                     ctx3.arc(spot.x, spot.y, spot.radius * 0.7, 0, 2 * Math.PI);
                     ctx3.fill();
                 }
             });
+            
+            // Інструкція
             ctx3.font = '24px "Comic Neue", sans-serif';
             ctx3.fillStyle = '#00796B';
             ctx3.textAlign = 'center';
             ctx3.fillText('🔍 Знайди всі плями кариєсу!', ctx3.canvas.width / 2, 40);
         }
+
         function handleCariesClick(e) {
             const rect = ctx3.canvas.getBoundingClientRect();
             const clickX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
             const clickY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+            
             cariesSpots.forEach(spot => {
                 if (!spot.found) {
                     const distance = Math.sqrt(Math.pow(spot.x - clickX, 2) + Math.pow(spot.y - clickY, 2));
+                    
                     if (distance < spot.radius) {
                         spot.found = true;
                         foundCariesCount++;
                         score += 15;
                         scoreText.textContent = `🌟 Бали: ${score}`;
                         playPositiveSound();
+                        
+                        // Анімація знахідки
                         createParticles(spot.x, spot.y);
+                        
                         if (foundCariesCount === cariesSpots.length) {
                             endCariesGame();
                         }
                     }
                 }
             });
+            
             drawCariesGame();
         }
+
         function createParticles(x, y) {
             for (let i = 0; i < 8; i++) {
                 setTimeout(() => {
@@ -1173,24 +1324,33 @@
                 }, i * 50);
             }
         }
+
         function animateCariesGame() {
             if (!isGameRunning || currentGame !== 'game3') return;
+            
             const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
             const timeLeft = CARIES_DURATION - elapsedSeconds;
             timerText.textContent = `⏳ Час: ${String(timeLeft).padStart(2, '0')}`;
+            
             if (timeLeft <= 0) {
                 endCariesGame();
                 return;
             }
+            
             animationFrameId = requestAnimationFrame(animateCariesGame);
         }
+
         function endCariesGame() {
             cancelAnimationFrame(animationFrameId);
             clearTimeout(gameTimerId);
+            
             cariesCanvas.removeEventListener('click', handleCariesClick);
             cariesCanvas.removeEventListener('touchstart', handleCariesClick);
             cariesEndBtn.removeEventListener('click', endCariesGame);
+            
             canvasContainer3.style.display = 'none';
+            cariesEndBtn.style.display = 'none';
+            
             let message = '';
             if (foundCariesCount === cariesSpots.length) {
                 message = `🏆 Вітаю! Ти знайшов всі ${foundCariesCount} плям кариєсу! Бали: ${score}!`;
@@ -1198,6 +1358,7 @@
                     applauseSound.currentTime = 0;
                     applauseSound.play();
                 }
+                
                 setTimeout(() => {
                     resumeSceneAndShowModel();
                     makeToothSmile();
@@ -1205,8 +1366,10 @@
             } else {
                 message = `✨ Непогано! Знайдено ${foundCariesCount}/${cariesSpots.length} плям. Бали: ${score}!`;
             }
+            
             endMessage.textContent = message;
             endMessage.style.display = 'block';
+            
             setTimeout(() => {
                 endMessage.style.display = 'none';
                 stopGame(true);
@@ -1217,4 +1380,3 @@
     </script>
 </body>
 </html>
-
