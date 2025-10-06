@@ -42,7 +42,7 @@
             justify-content: center;
             align-items: center;
             color: #00796B;
-            font-size: clamp(1.2em, 5vw, 1.5em);
+            font-size: clamp(1.1em, 4vw, 1.3em);
             text-align: center;
             padding: 20px;
             box-sizing: border-box;
@@ -50,20 +50,20 @@
         }
         .ui-btn {
             position: fixed;
-            padding: clamp(12px, 3vw, 15px) clamp(20px, 5vw, 25px);
-            border-radius: 20px;
-            font-size: clamp(1em, 4vw, 1.2em);
+            padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 15px);
+            border-radius: 15px;
+            font-size: clamp(0.9em, 3.5vw, 1.1em);
             font-weight: bold;
             z-index: 1000;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
             cursor: pointer;
-            border: 3px solid white;
+            border: 2px solid white;
             display: none;
             font-family: 'Comic Neue', sans-serif;
             text-align: center;
-            width: clamp(45%, 50vw, 50%);
-            max-width: 280px;
+            width: clamp(35%, 40vw, 45%);
+            max-width: 200px;
             animation: pulse 2s infinite;
         }
         .ui-btn:hover, .ui-btn:active {
@@ -71,78 +71,77 @@
         }
         /* КНОПКА ГРАТИ - З'ЯВЛЯЄТЬСЯ ПІСЛЯ ПОВІДОМЛЕННЯ */
         #mainPlayBtn {
-            bottom: clamp(140px, 20vh, 150px);
+            bottom: clamp(120px, 18vh, 130px);
             left: 10%;
             transform: translateX(-50%);
             background: linear-gradient(45deg, #4CAF50, #8BC34A);
             color: white;
-            width: clamp(55%, 60vw, 350px);
-            max-width: 350px;
+            width: clamp(45%, 50vw, 250px);
+            max-width: 250px;
         }
         /* КНОПКИ ВИБОРУ ГРИ */
         #startGame1Btn { 
-            bottom: clamp(160px, 22vh, 170px); 
+            bottom: clamp(140px, 20vh, 150px); 
             left: 10%; 
             background: linear-gradient(40deg, #FF6B6B, #FF8E53); 
             color: white; 
         }
         #startGame2Btn { 
-            bottom: clamp(160px, 22vh, 170px); 
+            bottom: clamp(140px, 20vh, 150px); 
             right: 10%;
             background: linear-gradient(40deg, #87CEFA, #4682B4); 
             color: white; 
         }
         #startGame3Btn { 
-            bottom: clamp(100px, 15vh, 110px); 
+            bottom: clamp(90px, 13vh, 100px); 
             left: 15%;
             transform: translateX(-50%);
             background: linear-gradient(40deg, #FFD700, #FFA500); 
             color: #4A00E0; 
-            border: 3px solid #4A00E0;
+            border: 2px solid #4A00E0;
         }
         #rulesBtn { 
-            bottom: clamp(20px, 8vh, 30px); 
+            bottom: clamp(15px, 6vh, 20px); 
             left: 15%;
             transform: translateX(-50%);
             background: linear-gradient(40deg, #BA68C8, #AB47BC); 
             color: white; 
         }
         #soundBtn { 
-            top: clamp(15px, 3vh, 20px); 
-            left: clamp(15px, 3vw, 20px); 
+            top: clamp(10px, 2vh, 15px); 
+            left: clamp(10px, 2vw, 15px); 
             background: linear-gradient(40deg, #00CED1, #20B2AA); 
             color: white; 
         }
-        
         /* КНОПКИ У МІНІ-ІГРАХ */
         #endBtn, #cleaningEndBtn, #cariesEndBtn {
-            bottom: clamp(15px, 3vh, 20px);
-            right: clamp(15px, 3vw, 20px);
-            padding: clamp(10px, 2.5vw, 12px) clamp(15px, 4vw, 20px);
-            font-size: clamp(0.9em, 3.5vw, 1em);
+            bottom: clamp(10px, 2vh, 15px);
+            right: clamp(10px, 2vw, 15px);
+            padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 12px);
+            font-size: clamp(0.8em, 3vw, 0.9em);
             background: linear-gradient(45deg, #ff4757, #ff6b81);
             color: white;
             width: auto;
-            max-width: 150px;
+            max-width: 120px;
         }
         /* КНОПКА ПОВЕРНЕННЯ ДО ЗУБЧИКА */
         #returnBtn {
-            bottom: clamp(15px, 3vh, 20px);
-            left: clamp(15px, 3vw, 20px);
-            padding: clamp(10px, 2.5vw, 12px) clamp(15px, 4vw, 20px);
-            font-size: clamp(0.9em, 3.5vw, 1em);
+            bottom: clamp(10px, 2vh, 15px);
+            left: clamp(10px, 2vw, 15px);
+            padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 12px);
+            font-size: clamp(0.8em, 3vw, 0.9em);
             background: linear-gradient(45deg, #ff4757, #ff6b81);
             color: white;
             width: auto;
-            max-width: 250px;
+            max-width: 180px;
         }
         .corner-btn {
             position: fixed;
-            bottom: clamp(15px, 3vh, 20px);
-            padding: clamp(10px, 2.5vw, 12px) clamp(15px, 4vw, 20px);
-            border-radius: 25px;
-            font-size: clamp(0.9em, 3.5vw, 0.95em);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            bottom: clamp(10px, 2vh, 15px);
+            padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 12px);
+            border-radius: 20px;
+            font-size: clamp(0.8em, 3vw, 0.9em);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             display: none;
             font-family: 'Comic Neue';
             z-index: 1100;
@@ -150,18 +149,18 @@
             animation: pulse 2s infinite;
         }
         #youtubeBtn { 
-            left: clamp(15px, 3vw, 20px); 
+            left: clamp(10px, 2vw, 15px); 
             background: linear-gradient(45deg, #ff4757, #ff6348); 
             color: white; 
         }
         #aboutBtn { 
-            right: clamp(15px, 3vw, 20px); 
+            right: clamp(10px, 2vw, 15px); 
             background: linear-gradient(45deg, #4CAF50, #8BC34A); 
             color: white; 
         }
         #listenVoiceBtn {
-            top: clamp(15px, 3vh, 20px);
-            right: clamp(15px, 3vw, 20px);
+            top: clamp(10px, 2vh, 15px);
+            right: clamp(10px, 2vw, 15px);
             background: linear-gradient(45deg, #9B59B6, #8E44AD);
             color: white;
         }
@@ -175,12 +174,12 @@
             font-weight: bold;
             text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.7);
             color: #00796B;
-            font-size: clamp(1.3em, 4.5vw, 1.5em);
+            font-size: clamp(1.1em, 4vw, 1.3em);
             background: rgba(255, 255, 255, 0.7);
-            padding: 8px 15px;
-            border-radius: 15px;
+            padding: 6px 12px;
+            border-radius: 12px;
         }
-        #scoreText { top: clamp(50px, 10vh, 60px); }
+        #scoreText { top: clamp(40px, 8vh, 50px); }
         #endMessage, #rulesMessage {
             position: fixed;
             top: 50%;
@@ -188,43 +187,43 @@
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, #4DB6AC, #00796B);
             color: white;
-            padding: clamp(15px, 4vw, 20px);
-            border-radius: 20px;
+            padding: clamp(12px, 3vw, 15px);
+            border-radius: 15px;
             z-index: 10000;
-            font-size: clamp(1.2em, 5vw, 1.6em);
+            font-size: clamp(1.1em, 4.5vw, 1.4em);
             text-align: center;
             font-family: 'Comic Neue';
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
             display: none;
-            max-width: 90%;
-            width: 90%;
-            border: 3px solid #FFD700;
+            max-width: 85%;
+            width: 85%;
+            border: 2px solid #FFD700;
         }
         #rulesMessage h3 { 
-            font-size: clamp(1.4em, 6vw, 1.8em); 
-            margin: clamp(5px, 1vh, 10px) 0; 
+            font-size: clamp(1.3em, 5vw, 1.6em); 
+            margin: clamp(5px, 1vh, 8px) 0; 
             color: #FFD700;
         }
         #rulesMessage ul { 
             text-align: left; 
             list-style-type: '🦷 '; 
-            padding-left: clamp(15px, 4vw, 20px); 
-            margin: clamp(5px, 1vh, 10px) 0; 
+            padding-left: clamp(12px, 3vw, 15px); 
+            margin: clamp(5px, 1vh, 8px) 0; 
         }
         #rulesMessage li { 
-            margin-bottom: clamp(5px, 1.5vh, 8px); 
-            font-size: clamp(1.1em, 4.5vw, 1.4em); 
+            margin-bottom: clamp(4px, 1vh, 6px); 
+            font-size: clamp(1em, 4vw, 1.2em); 
         }
         #rulesMessage button {
-            margin-top: clamp(15px, 3vh, 20px);
-            padding: clamp(12px, 3vw, 15px) clamp(25px, 5vw, 30px);
+            margin-top: clamp(10px, 2vh, 15px);
+            padding: clamp(8px, 2vw, 10px) clamp(15px, 4vw, 20px);
             border: none;
-            border-radius: 30px;
+            border-radius: 20px;
             background: #FFD700;
             color: #00796B;
             font-weight: bold;
             cursor: pointer;
-            font-size: clamp(1.2em, 5vw, 1.5em);
+            font-size: clamp(1em, 4vw, 1.2em);
             transition: all 0.3s ease;
         }
         #rulesMessage button:hover {
@@ -247,16 +246,16 @@
         }
         #brush {
             position: fixed;
-            width: clamp(80px, 20vw, 100px);
-            height: clamp(80px, 20vw, 100px);
-            font-size: clamp(70px, 18vw, 90px);
+            width: clamp(60px, 15vw, 80px);
+            height: clamp(60px, 15vw, 80px);
+            font-size: clamp(50px, 13vw, 70px);
             text-align: center;
-            line-height: clamp(80px, 20vw, 100px);
+            line-height: clamp(60px, 15vw, 80px);
             pointer-events: none;
             z-index: 100;
             display: none;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
-            filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+            text-shadow: 0 0 8px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
         }
         @keyframes pulse {
             0% { transform: scale(1); }
@@ -265,7 +264,7 @@
         }
         @keyframes float {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
             100% { transform: translateY(0px); }
         }
         .floating {
@@ -276,10 +275,10 @@
 <body>
     <div class="arjs-loader" id="loader">
         <div class="pulse floating">🦷 Знайди картку Зубчика!</div>
-        <div style="margin-top: clamp(10px, 2vh, 15px); font-size: clamp(1em, 4vw, 1.2em); font-weight: bold; color: #00796B;">
+        <div style="margin-top: clamp(8px, 1.5vh, 12px); font-size: clamp(0.9em, 3.5vw, 1.1em); font-weight: bold; color: #00796B;">
             ❗ Наведи камеру на картку!
         </div>
-        <div style="margin-top: clamp(5px, 1vh, 8px); font-size: clamp(0.8em, 3vw, 1em);">
+        <div style="margin-top: clamp(4px, 0.8vh, 6px); font-size: clamp(0.7em, 2.5vw, 0.9em);">
             Покрути зубчика пальчиком! 😊
         </div>
     </div>
@@ -610,7 +609,7 @@
             isTargetVisible = true;
             toothModel.object3D.visible = true;
             updateUIOnTarget();
-            if (!bgMusic.muted && !isGameRunning && wasBgMusicPlaying) {
+            if (!bgMusic.muted && !isGameRunning && wasBgMusicPlaying && toothVoiceSound.paused) {
                  bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
             }
         });
@@ -631,7 +630,7 @@
             [bgMusic, applauseSound, toothClickSound, toothMessageSound, toothVoiceSound].forEach(a => a.muted = isMuted);
             soundBtn.textContent = isMuted ? "🔊 Звук" : "🔇 Без звуку";
 
-            if (!isMuted && isTargetVisible && !isGameRunning) {
+            if (!isMuted && isTargetVisible && !isGameRunning && toothVoiceSound.paused) {
                 bgMusic.play().catch(e => console.log("🔇 Музика не запустилася:", e));
                 wasBgMusicPlaying = true;
             } else if (isMuted) {
@@ -645,9 +644,20 @@
         listenVoiceBtn.addEventListener('click', () => {
             if (isTargetVisible && !isGameRunning) {
                 if (!toothVoiceSound.muted) {
+                    // Пауза фонової музики
+                    if (!bgMusic.paused) {
+                        bgMusic.pause();
+                        wasBgMusicPlaying = true;
+                    }
                     toothVoiceSound.currentTime = 0;
                     toothVoiceSound.loop = false; // Не зациклювати
                     toothVoiceSound.play().catch(e => console.log("🔇 Голос Зубчика не запустився:", e));
+                    // Відновлення фонової музики після завершення toothVoiceSound
+                    toothVoiceSound.onended = () => {
+                        if (!bgMusic.muted && wasBgMusicPlaying && isTargetVisible && !isGameRunning) {
+                            bgMusic.play().catch(e => console.log("🔇 Музика не відновилася:", e));
+                        }
+                    };
                 }
             }
         });
@@ -759,7 +769,7 @@
 
             resumeSceneAndShowModel();
             
-            if (!bgMusic.muted && wasBgMusicPlaying) {
+            if (!bgMusic.muted && wasBgMusicPlaying && toothVoiceSound.paused) {
                  bgMusic.play().catch(e => console.log("Музика не відновилася після гри:", e));
             }
         }
@@ -949,12 +959,12 @@
 
         function drawScene2() {
             ctx2.clearRect(0, 0, cleaningCanvas.width, cleaningCanvas.height);
-// ЗУБЧИК - з кольором для видимості
-ctx2.font = `${Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.7}px 'Comic Neue', sans-serif`;
-ctx2.textAlign = 'center';
-ctx2.textBaseline = 'middle';
-ctx2.fillStyle = '#4A90E2'; // Синій колір
-ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
+            // ЗУБЧИК - з кольором для видимості
+            ctx2.font = `${Math.min(cleaningCanvas.width, cleaningCanvas.height) * 0.7}px 'Comic Neue', sans-serif`;
+            ctx2.textAlign = 'center';
+            ctx2.textBaseline = 'middle';
+            ctx2.fillStyle = '#4A90E2'; // Синій колір
+            ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
             // Плями бруду
             dirtPatches.forEach(patch => {
                 if (patch.cleanPercentage < 100) {
@@ -969,9 +979,9 @@ ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
             
             // Інструкція
             ctx2.fillStyle = '#00796B';
-            ctx2.font = '24px "Comic Neue", sans-serif';
+            ctx2.font = '20px "Comic Neue", sans-serif';
             ctx2.textAlign = 'center';
-            ctx2.fillText('🪥 Чисти зубчик щіткою!', cleaningCanvas.width / 2, 40);
+            ctx2.fillText('🪥 Чисти зубчик щіткою!', cleaningCanvas.width / 2, 35);
         }
 
         function startClean(e) {
@@ -1234,10 +1244,10 @@ ctx2.fillText("🦷", cleaningCanvas.width / 2, cleaningCanvas.height / 2);
             });
             
             // Інструкція
-            ctx3.font = '24px "Comic Neue", sans-serif';
+            ctx3.font = '20px "Comic Neue", sans-serif';
             ctx3.fillStyle = '#00796B';
             ctx3.textAlign = 'center';
-            ctx3.fillText('🔍 Знайди всі плями кариєсу!', ctx3.canvas.width / 2, 40);
+            ctx3.fillText('🔍 Знайди всі плями кариєсу!', ctx3.canvas.width / 2, 35);
         }
 
         function handleCariesClick(e) {
