@@ -159,7 +159,7 @@
             background: linear-gradient(45deg, #4CAF50, #8BC34A); 
             color: white; 
         }
-        #resetRotationBtn {
+        #listenVoiceBtn {
             top: clamp(15px, 3vh, 20px);
             right: clamp(15px, 3vw, 20px);
             background: linear-gradient(45deg, #9B59B6, #8E44AD);
@@ -181,7 +181,7 @@
             border-radius: 15px;
         }
         #scoreText { top: clamp(50px, 10vh, 60px); }
-        #endMessage, #rulesMessage, #listenMessage {
+        #endMessage, #rulesMessage {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -215,7 +215,7 @@
             margin-bottom: clamp(5px, 1.5vh, 8px); 
             font-size: clamp(1.1em, 4.5vw, 1.4em); 
         }
-        #rulesMessage button, #listenMessage button {
+        #rulesMessage button {
             margin-top: clamp(15px, 3vh, 20px);
             padding: clamp(12px, 3vw, 15px) clamp(25px, 5vw, 30px);
             border: none;
@@ -227,7 +227,7 @@
             font-size: clamp(1.2em, 5vw, 1.5em);
             transition: all 0.3s ease;
         }
-        #rulesMessage button:hover, #listenMessage button:hover {
+        #rulesMessage button:hover {
             transform: scale(1.05);
             background: #FFF59D;
         }
@@ -298,11 +298,6 @@
     </div>
 
     <div id="endMessage"></div>
-    <div id="listenMessage">
-        <p>🦷 Привіт, друже! Я - Зубчик-Веселунчик! 😊</p>
-        <p>Хочеш послухати мою пісеньку?</p>
-        <button id="listenBtn">Послухати 🎶</button>
-    </div>
 
     <div id="canvasGameContainer" style="display: none;">
         <canvas id="gameCanvas"></canvas>
@@ -335,6 +330,7 @@
             <audio id="applauseSound" src="assets/audio/applause.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
             <audio id="toothClickSound" src="assets/audio/sound5.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
             <audio id="toothMessageSound" src="assets/audio/sound1.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
+            <audio id="toothVoiceSound" src="assets/audio/tooth-voice.mp3" preload="auto" muted playsinline crossorigin="anonymous"></audio>
         </a-assets>
         
         <!-- Додаємо основний ambient light для всієї сцени -->
@@ -374,7 +370,7 @@
     
     <a href="https://www.youtube.com/@23smartlessa32?si=d3NhKDot8U8Mc2Hi" id="youtubeBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">❤️ Автор</a>
     <a href="https://nikadent-family.com.ua/ua/" id="aboutBtn" class="corner-btn" target="_blank" rel="noopener noreferrer">ℹ️ Про нас</a>
-    <button id="resetRotationBtn" class="ui-btn">🔄 Скинути</button>
+    <button id="listenVoiceBtn" class="ui-btn">👂 Слухати</button>
 
     <button id="returnBtn" class="ui-btn" style="display: none;">🚪 Повернутися до Зубчика</button>
 
@@ -398,18 +394,16 @@
         const rulesBtn = document.querySelector('#rulesBtn');
         const soundBtn = document.querySelector('#soundBtn');
         const returnBtn = document.querySelector('#returnBtn');
+        const listenVoiceBtn = document.querySelector('#listenVoiceBtn');
         
         const youtubeBtn = document.querySelector('#youtubeBtn');
         const aboutBtn = document.querySelector('#aboutBtn');
-        const resetRotationBtn = document.querySelector('#resetRotationBtn');
 
         const timerText = document.getElementById('timerText');
         const scoreText = document.getElementById('scoreText');
         const endMessage = document.getElementById('endMessage');
         const rulesMessage = document.getElementById('rulesMessage');
         const closeRulesBtn = document.getElementById('closeRulesBtn');
-        const listenMessage = document.getElementById('listenMessage');
-        const listenBtn = document.getElementById('listenBtn');
         const canvasContainer1 = document.getElementById('canvasGameContainer');
         const canvasContainer2 = document.getElementById('cleaningGameContainer');
         const canvasContainer3 = document.getElementById('cariesGameContainer');
@@ -426,6 +420,7 @@
         const applauseSound = document.querySelector('#applauseSound');
         const toothClickSound = document.querySelector('#toothClickSound');
         const toothMessageSound = document.querySelector('#toothMessageSound'); 
+        const toothVoiceSound = document.querySelector('#toothVoiceSound');
 
         // СТАНИ ГРИ
         let isGameRunning = false;
@@ -455,7 +450,7 @@
         const BRUSH_SIZE = 95; // Збільшено для дитини
 
         // Початкове налаштування звуку
-        [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = true);
+        [bgMusic, applauseSound, toothClickSound, toothMessageSound, toothVoiceSound].forEach(a => a.muted = true);
         soundBtn.textContent = "🔊 Звук"; 
         
         // === КОМПОНЕНТ ДЛЯ ОБРОБКИ СЕНСОРНИХ ЖЕСТІВ ===
@@ -486,7 +481,7 @@
                 const targetArea = this.el.sceneEl; 
 
                 targetArea.addEventListener('touchstart', (e) => {
-                    if (isGameRunning || gameSelectionActive || rulesMessage.style.display === 'block' || listenMessage.style.display === 'block') {
+                    if (isGameRunning || gameSelectionActive || rulesMessage.style.display === 'block') {
                         return;
                     }
                     
@@ -507,7 +502,7 @@
                 }, { passive: false });
 
                 targetArea.addEventListener('touchmove', (e) => {
-                    if (isGameRunning || gameSelectionActive || rulesMessage.style.display === 'block' || listenMessage.style.display === 'block') {
+                    if (isGameRunning || gameSelectionActive || rulesMessage.style.display === 'block') {
                         return;
                     }
                     
@@ -545,7 +540,7 @@
         // === 1. ВЗАЄМОДІЯ З МОДЕЛЛЮ ===
         
         toothModel.addEventListener('click', () => {
-            if (!isGameRunning && !gameSelectionActive && rulesMessage.style.display !== 'block' && listenMessage.style.display !== 'block') {
+            if (!isGameRunning && !gameSelectionActive && rulesMessage.style.display !== 'block') {
                 if (!toothClickSound.muted) {
                     toothClickSound.currentTime = 0;
                     toothClickSound.play().catch(e => console.log("🔇 Звук не запустився:", e));
@@ -561,20 +556,6 @@
                 endMessage.textContent = "🦷 Покрути мене пальчиком, щоб роздивитися! 😊";
                 endMessage.style.display = 'block';
                 setTimeout(() => { endMessage.style.display = 'none'; }, 3000);
-            }
-        });
-
-        resetRotationBtn.addEventListener('click', () => {
-            if (!isGameRunning) {
-                toothModel.object3D.rotation.set(0, 0, 0);
-                
-                const gestures = AScene.components['touch-gestures'];
-                const initialScale = gestures ? gestures.data.initialScale : 0.3;
-                toothModel.object3D.scale.set(initialScale, initialScale, initialScale);
-                
-                endMessage.textContent = "🦷 Зубчик повернувся на місце! 😊";
-                endMessage.style.display = 'block';
-                setTimeout(() => { endMessage.style.display = 'none'; }, 2000);
             }
         });
 
@@ -597,7 +578,7 @@
         function updateUIOnTarget() {
             const isMenuShown = rulesMessage.style.display === 'block';
 
-            [youtubeBtn, aboutBtn, soundBtn, timerText, scoreText, returnBtn, mainPlayBtn, startGame1Btn, startGame2Btn, startGame3Btn, rulesBtn, resetRotationBtn, listenMessage].forEach(btn => btn.style.display = 'none');
+            [youtubeBtn, aboutBtn, soundBtn, timerText, scoreText, returnBtn, mainPlayBtn, startGame1Btn, startGame2Btn, startGame3Btn, rulesBtn, listenVoiceBtn].forEach(btn => btn.style.display = 'none');
             loader.style.display = 'none';
             
             if (isGameRunning) {
@@ -608,21 +589,16 @@
                 youtubeBtn.style.display = 'block';
                 aboutBtn.style.display = 'block';
                 soundBtn.style.display = 'block';
-                resetRotationBtn.style.display = 'block';
+                listenVoiceBtn.style.display = 'block';
 
                 if (gameSelectionActive) {
                     startGame1Btn.style.display = !isMenuShown ? 'block' : 'none';
                     startGame2Btn.style.display = !isMenuShown ? 'block' : 'none';
                     startGame3Btn.style.display = !isMenuShown ? 'block' : 'none';
                     rulesBtn.style.display = !isMenuShown ? 'block' : 'none';
-                    listenMessage.style.display = 'none';
                 } else {
                     if (!isMenuShown) {
-                        if (listenMessage.style.display === 'block') {
-                            mainPlayBtn.style.display = 'none';
-                        } else {
-                            mainPlayBtn.style.display = 'block';
-                        }
+                        mainPlayBtn.style.display = 'block';
                     }
                 }
             } else {
@@ -652,7 +628,7 @@
 
         function toggleSound() {
             const isMuted = !bgMusic.muted;
-            [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = isMuted);
+            [bgMusic, applauseSound, toothClickSound, toothMessageSound, toothVoiceSound].forEach(a => a.muted = isMuted);
             soundBtn.textContent = isMuted ? "🔊 Звук" : "🔇 Без звуку";
 
             if (!isMuted && isTargetVisible && !isGameRunning) {
@@ -664,6 +640,17 @@
             }
         }
         soundBtn.addEventListener('click', toggleSound);
+
+        // Кнопка "Слухати" - грає tooth-voice.mp3 один раз
+        listenVoiceBtn.addEventListener('click', () => {
+            if (isTargetVisible && !isGameRunning) {
+                if (!toothVoiceSound.muted) {
+                    toothVoiceSound.currentTime = 0;
+                    toothVoiceSound.loop = false; // Не зациклювати
+                    toothVoiceSound.play().catch(e => console.log("🔇 Голос Зубчика не запустився:", e));
+                }
+            }
+        });
 
         rulesBtn.addEventListener('click', () => {
             rulesMessage.style.display = 'block';
@@ -678,45 +665,19 @@
         function resetToListenState() {
             isGameRunning = false;
             gameSelectionActive = false;
-            listenMessage.style.display = isTargetVisible ? 'block' : 'none';
-            mainPlayBtn.style.display = 'none';
+            mainPlayBtn.style.display = isTargetVisible ? 'block' : 'none';
             updateUIOnTarget();
         }
 
         function showGameSelectionMenu() {
             gameSelectionActive = true;
             endMessage.style.display = 'none';
-            listenMessage.style.display = 'none';
             resumeSceneAndShowModel();
             updateUIOnTarget();
         }
         
         mainPlayBtn.addEventListener('click', showGameSelectionMenu);
         
-        listenBtn.addEventListener('click', () => {
-            listenMessage.style.display = 'none'; 
-
-            if (bgMusic.muted) {
-                [bgMusic, applauseSound, toothClickSound, toothMessageSound].forEach(a => a.muted = false); 
-                soundBtn.textContent = "🔇 Без звуку";
-            }
-            
-            wasBgMusicPlaying = !bgMusic.muted && !bgMusic.paused;
-
-            if (toothMessageSound) {
-                bgMusic.pause(); 
-                toothMessageSound.currentTime = 0;
-                
-                toothMessageSound.play().catch(e => console.error("Повідомлення від Зубчика не запустилося:", e));
-            }
-            
-            const messageDuration = toothMessageSound && toothMessageSound.duration && isFinite(toothMessageSound.duration) ? toothMessageSound.duration * 1000 + 500 : 3500;
-            
-            setTimeout(() => {
-                showGameSelectionMenu();
-            }, messageDuration); 
-        });
-
         // === 4. КЕРУВАННЯ ГРОЮ (ЗАПУСК/ЗУПИНКА) ===
         
         function returnToTooth() {
