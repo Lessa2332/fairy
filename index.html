@@ -189,24 +189,24 @@
         }
         #scoreText { top: clamp(50px, 10vh, 60px); }
         #endMessage, #rulesMessage, #listenMessage {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #4DB6AC, #00796B);
-            color: white;
-            padding: clamp(15px, 4vw, 20px);
-            border-radius: 20px;
-            z-index: 10000;
-            font-size: clamp(1.2em, 5vw, 1.6em);
-            text-align: center;
-            font-family: 'Comic Neue';
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            display: none;
-            max-width: 90%;
-            width: 90%;
-            border: 3px solid #FFD700;
-        }
+    position: fixed;
+    top: clamp(70px, 12vh, 90px); /* трохи нижче за #soundBtn (який на ~15–20px зверху) */
+    left: 50%;
+    transform: translateX(-50%); /* лише по горизонталі */
+    background: linear-gradient(135deg, #4DB6AC, #00796B);
+    color: white;
+    padding: clamp(15px, 4vw, 20px);
+    border-radius: 20px;
+    z-index: 10000;
+    font-size: clamp(1.2em, 5vw, 1.6em);
+    text-align: center;
+    font-family: 'Comic Neue';
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    display: none;
+    max-width: 90%;
+    width: 90%;
+    border: 3px solid #FFD700;
+}
         #rulesMessage h3 { 
             font-size: clamp(1.4em, 6vw, 1.8em); 
             margin: clamp(5px, 1vh, 10px) 0; 
@@ -1217,3 +1217,4 @@
     </script>
 </body>
 </html>
+
